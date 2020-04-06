@@ -1,0 +1,62 @@
+pipeline {
+
+    agent any
+    
+    environment {
+		API_NAME = 'demo-api'
+        OCIR_PASSWORD = credentials('ocir-secret') 
+		OCIR_USERNAME = 'dasdsdasas/oracleidentitycloudservice/test-user'
+		OCIR_REPOSITORY = 'iad.ocir.io/ddsasasd/demo'
+		OCIR_REGISTRY = 'iad.ocir.io'
+		BUILD_TAG = 'demo'
+    }
+	
+    stages {
+
+        stage('Build') {
+            steps {
+                sh '''
+					 echo '********************************'
+					 echo "Building $API_NAME jar file"
+					 echo '********************************'
+                    ./jenkins/build-img/mvn.sh
+					 echo '***********************************************'
+					 echo "Success: Building $API_NAME jar file"
+					 echo '***********************************************'
+					 echo '***********************************************************'
+					 echo "Building and tag $API_NAME image using docker compose"
+					 echo '***********************************************************'
+                    ./jenkins/build-img/build.sh
+					 echo '**************************************************************************'
+					 echo "Success: Building and tag $API_NAME image using docker compose"
+					 echo '**************************************************************************'
+                '''
+            }
+            post {
+                success {
+                   archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+               echo 'Test stage'
+            }
+
+        }
+
+        stage('Push-To-OCI-Registry') {
+            steps {
+				echo '********************************'
+				echo "Login to OCIR and push the image"
+				echo '********************************'
+                sh './jenkins/push-img/push.sh'
+				echo '*********************************************'
+				echo "Success: Pushing the image to OCI is complete"
+				echo '*********************************************'
+            }
+        }
+		
+    }
+}
