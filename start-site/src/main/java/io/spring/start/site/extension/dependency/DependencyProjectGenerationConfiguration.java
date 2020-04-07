@@ -16,6 +16,8 @@
 
 package io.spring.start.site.extension.dependency;
 
+import org.springframework.context.annotation.Bean;
+
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.condition.ConditionalOnBuildSystem;
 import io.spring.initializr.generator.condition.ConditionalOnPlatformVersion;
@@ -26,9 +28,13 @@ import io.spring.initializr.generator.spring.build.gradle.ConditionalOnGradleVer
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.start.site.extension.dependency.db.MysqlORMBuildCustomizer;
 import io.spring.start.site.extension.dependency.db.MysqlORMProjectContributor;
+import io.spring.start.site.extension.dependency.db.OJDBCBuildCustomizer;
+import io.spring.start.site.extension.dependency.db.OJDBCProjectContributor;
 import io.spring.start.site.extension.dependency.flyway.FlywayProjectContributor;
 import io.spring.start.site.extension.dependency.jenkins.JenkinsScriptBuildCustomizer;
 import io.spring.start.site.extension.dependency.jenkins.JenkinsScriptProjectContributor;
+import io.spring.start.site.extension.dependency.jenkins.KubernetesScriptBuildCustomizer;
+import io.spring.start.site.extension.dependency.jenkins.KubernetesScriptProjectContributor;
 import io.spring.start.site.extension.dependency.liquibase.LiquibaseProjectContributor;
 import io.spring.start.site.extension.dependency.lombok.LombokGradleBuildCustomizer;
 import io.spring.start.site.extension.dependency.reactor.ReactorTestBuildCustomizer;
@@ -38,8 +44,6 @@ import io.spring.start.site.extension.dependency.springsecurity.SpringSecurityRS
 import io.spring.start.site.extension.dependency.springsecurity.SpringSecurityTestBuildCustomizer;
 import io.spring.start.site.extension.dependency.springsession.SpringSessionBuildCustomizer;
 import io.spring.start.site.extension.dependency.swagger.SwaggerBuildCustomizer;
-
-import org.springframework.context.annotation.Bean;
 
 /**
  * {@link ProjectGenerationConfiguration} for customizations relevant to selected
@@ -121,29 +125,53 @@ public class DependencyProjectGenerationConfiguration {
 	public SwaggerBuildCustomizer swaggerBuildCustomizer() {
 		return new SwaggerBuildCustomizer();
 	}
-	
+
 	@Bean
 	@ConditionalOnRequestedDependency("mysql-orm-id")
 	public MysqlORMProjectContributor mysqlDBProjectContributor() {
 		return new MysqlORMProjectContributor();
 	}
-	
+
 	@Bean
 	@ConditionalOnRequestedDependency("mysql-orm-id")
 	public MysqlORMBuildCustomizer mysqlDBBuildCustomizer() {
 		return new MysqlORMBuildCustomizer();
 	}
+
 	@Bean
 	@ConditionalOnRequestedDependency("jenkins-scripts-id")
 	public JenkinsScriptProjectContributor jenkinsProjectContributor() {
 		return new JenkinsScriptProjectContributor();
 	}
-	
+
 	@Bean
 	@ConditionalOnRequestedDependency("jenkins-scripts-id")
 	public JenkinsScriptBuildCustomizer jenkinsBuildCustomizer() {
 		return new JenkinsScriptBuildCustomizer();
 	}
 	
+	@Bean
+	@ConditionalOnRequestedDependency("ojdbc-id")
+	public OJDBCProjectContributor ojdbcProjectContributor() {
+		return new OJDBCProjectContributor();
+	}
+
+	@Bean
+	@ConditionalOnRequestedDependency("ojdbc-id")
+	public OJDBCBuildCustomizer ojdbcBuildCustomizer() {
+		return new OJDBCBuildCustomizer();
+	}
+	
+	@Bean
+	@ConditionalOnRequestedDependency("kube-script-id")
+	public KubernetesScriptBuildCustomizer kubernetesBuildCustomizer() {
+		return new KubernetesScriptBuildCustomizer();
+	}
+	
+	@Bean
+	@ConditionalOnRequestedDependency("kube-script-id")
+	public KubernetesScriptProjectContributor kubernetesProjectContributor() {
+		return new KubernetesScriptProjectContributor();
+	}
 
 }

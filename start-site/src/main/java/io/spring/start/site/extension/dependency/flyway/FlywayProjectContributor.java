@@ -37,12 +37,7 @@ public class FlywayProjectContributor implements ProjectContributor {
 		Files.createDirectories(migrationDirectory);
 		Files.createFile(projectRoot.resolve("src/main/resources/db/migration/db.xml"));
 		Files.createFile(projectRoot.resolve("src/main/resources/db/migration/db1.xml"));
-		
-	}
-	
-	public static void main(String[] args) {
-		Path r = Paths.get("FlywayProjectContributors.java","fg.s","df").toAbsolutePath();
-		System.out.println(r);
+
 	}
 
 }

@@ -19,10 +19,7 @@ package io.spring.start.site.extension.dependency.swagger;
 import io.spring.initializr.generator.buildsystem.Build;
 import io.spring.initializr.generator.buildsystem.DependencyContainer;
 import io.spring.initializr.generator.buildsystem.DependencyScope;
-import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
-import io.spring.initializr.generator.version.VersionParser;
-import io.spring.initializr.generator.version.VersionRange;
 
 /**
  * {@link BuildCustomizer} for Spring Session that provides explicit handling for the
@@ -33,13 +30,13 @@ import io.spring.initializr.generator.version.VersionRange;
  */
 public class SwaggerBuildCustomizer implements BuildCustomizer<Build> {
 
-
 	@Override
 	public void customize(Build build) {
 		DependencyContainer dependencies = build.dependencies();
-		dependencies.add("swagger-id-swagger2", "io.springfox", "springfox-swagger2", DependencyScope.COMPILE,"2.9.2");
+		dependencies.add("swagger-id-swagger2", "io.springfox", "springfox-swagger2", DependencyScope.COMPILE, "2.9.2");
 		dependencies.remove("swagger-id");
-		dependencies.add("swagger-id-swagger-ui", "io.springfox", "springfox-swagger-ui", DependencyScope.COMPILE,"2.9.2");
+		dependencies.add("swagger-id-swagger-ui", "io.springfox", "springfox-swagger-ui", DependencyScope.COMPILE,
+				"2.9.2");
 		dependencies.add("web");
 	}
 

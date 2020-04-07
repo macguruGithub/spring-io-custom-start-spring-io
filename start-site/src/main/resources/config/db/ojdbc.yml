@@ -1,0 +1,24 @@
+spring:
+  jackson:
+    date-format: MM-dd-yyyy
+  datasource:
+    url: jdbc:orcle:thin:@10.0.0.10:1521:NIDEV
+    username: sched6dev
+    password: sched6dev1
+    driverClassName: oracle.jdbc.OracleDriver
+    hikari:
+      minimumIdle: 1
+      maximumPoolSize: 2
+      idleTimeout: 100000
+      connectionTimeout: 20000
+      maxLifeTime: 1800000
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true

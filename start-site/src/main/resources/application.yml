@@ -1296,6 +1296,16 @@ initializr:
         - name: Jenkins Scripts
           id: jenkins-scripts-id
           description: automate the parts of software development related to building, testing, and deploying, facilitating continuous integration and continuous delivery
+        - name: ORM Oracle DB
+          id: ojdbc-id
+          description: metadata descriptor is used to connect object code to a relational database using Oracle
+          groupId: com.oracle
+          artifactId: ojdbc6
+          scope: system
+          #systemPath: ${project.basedir}/lib/ojdbc6-11.2.0.3.jar
+        - name: Kubernetes Script
+          id: kube-script-id
+          description: open-source container-orchestration system for automating application deployment, scaling, and management.
           
         
   types:

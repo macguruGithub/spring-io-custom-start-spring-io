@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  labels:
+    name: event-management
+  name: event-management
+  namespace: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: event-management
+  template:
+    metadata:
+      labels:
+        name: event-management
+    spec:
+      containers:
+        - env:
+            - name: NI_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: ni_env
+            - name: NI_DB_PASS
+              valueFrom:
+                  secretKeyRef:
+                    key: password
+                    name: ni-db-secret
+          image: 'iad.ocir.io/iduxgmiwmgqg/event-mgmt-api:sandbox'
+          imagePullPolicy: Always
+          name: event-management
+          ports:
+            - containerPort: 8086
+      imagePullSecrets:
+        - name: ocirsecret
+      nodeSelector:
+        node-pool: app-node-pool
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: event-management
+  name: event-management
+  namespace: api
+spec:
+  ports:
+    - port: 8086
+      protocol: TCP
+      targetPort: 8086
+  selector:
+    name: event-management
+  type: ClusterIP
