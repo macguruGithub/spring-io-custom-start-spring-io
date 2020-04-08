@@ -43,6 +43,8 @@ import io.spring.start.site.extension.dependency.springkafka.SpringKafkaBuildCus
 import io.spring.start.site.extension.dependency.springsecurity.SpringSecurityRSocketBuildCustomizer;
 import io.spring.start.site.extension.dependency.springsecurity.SpringSecurityTestBuildCustomizer;
 import io.spring.start.site.extension.dependency.springsession.SpringSessionBuildCustomizer;
+import io.spring.start.site.extension.dependency.swagger.RedisBuildCustomizer;
+import io.spring.start.site.extension.dependency.swagger.RedisProjectContributor;
 import io.spring.start.site.extension.dependency.swagger.SwaggerBuildCustomizer;
 
 /**
@@ -174,4 +176,16 @@ public class DependencyProjectGenerationConfiguration {
 		return new KubernetesScriptProjectContributor();
 	}
 
+	@Bean
+	@ConditionalOnRequestedDependency("redis-id")
+	public RedisBuildCustomizer redisBuildCustomizer() {
+		return new RedisBuildCustomizer();
+	}
+	
+	@Bean
+	@ConditionalOnRequestedDependency("redis-id")
+	public RedisProjectContributor redisProjectContributor() {
+		return new RedisProjectContributor();
+	}
+	
 }

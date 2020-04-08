@@ -1306,7 +1306,9 @@ initializr:
         - name: Kubernetes Script
           id: kube-script-id
           description: open-source container-orchestration system for automating application deployment, scaling, and management.
-          
+        - name: Redis
+          id: redis-id
+          description: An in-memory data structure project implementing a distributed, in-memory key-value database with optional durability.          
         
   types:
     - name: Maven Project

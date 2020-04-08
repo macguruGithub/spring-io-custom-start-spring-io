@@ -1,0 +1,11 @@
+spring:
+  cache:
+    type: redis
+    redis:
+      cache-null-values: false
+      time-to-live: 60000
+      use-key-prefix: true
+  redis:
+    host: 127.0.0.1
+    password: sched62019
+    port: 6379
