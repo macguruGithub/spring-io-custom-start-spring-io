@@ -17,7 +17,7 @@ public class RedisProjectContributor implements ProjectContributor {
 		Path targetFilepath = projectRoot.resolve("src/main/resources/application.yml");
 		Files.createFile(targetFilepath);
 		Path srcFilepath = Paths.get("src/main/resources/config/redisFile/redis.yml");
-		Files.copy(srcFilepath, targetFilepath, StandardCopyOption.COPY_ATTRIBUTES);
+		Files.copy(srcFilepath, targetFilepath, StandardCopyOption.REPLACE_EXISTING);
 
 	}
 }
