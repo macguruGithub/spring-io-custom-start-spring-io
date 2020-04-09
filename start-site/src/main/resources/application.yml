@@ -1308,8 +1308,10 @@ initializr:
           description: open-source container-orchestration system for automating application deployment, scaling, and management.
         - name: Redis
           id: redis-id
-          description: An in-memory data structure project implementing a distributed, in-memory key-value database with optional durability.          
-        
+          description: An in-memory data structure project implementing a distributed, in-memory key-value database with optional durability.
+        - name: Exception
+          id: exception-id
+          description: One of the powerful mechanism to handle the runtime errors so that normal flow of the application can be maintained.        
   types:
     - name: Maven Project
       id: maven-project
