@@ -7,18 +7,18 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
+import io.spring.start.site.custom.CommonUtil;
 
 public class MysqlORMProjectContributor implements ProjectContributor {
 
 	@Override
 	public void contribute(Path projectRoot) throws IOException {
-		Path migrationDirectory = projectRoot.resolve("src/main/resources");
-		Files.createDirectories(migrationDirectory);
-		Path targetFilepath = projectRoot.resolve("src/main/resources/application.yml");
-		Files.createFile(targetFilepath);
-		Path srcFilepath = Paths.get("src/main/resources/config/db/orm-db.yml");
-		Files.copy(srcFilepath, targetFilepath, StandardCopyOption.REPLACE_EXISTING);
-
+		String targetStr = "src/main/resources/application.xml";
+		String srcStr = "src/main/resources/config/db/orm-db.yml";
+		Path targetFilepath = null;
+		targetFilepath = CommonUtil.createFile(projectRoot, targetStr);
+		if (!CommonUtil.isDBConfigurationExists(targetFilepath)) {
+			CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, srcStr);
+		}
 	}
-
 }
