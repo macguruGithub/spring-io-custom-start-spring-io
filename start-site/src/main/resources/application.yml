@@ -1281,7 +1281,7 @@ initializr:
             - rel: guide
               href: https://github.com/alibaba/spring-cloud-alibaba/tree/master/spring-cloud-alibaba-examples/sentinel-example/sentinel-core-example
               description: Sentinel Example
-    - name: Bpmlinks Custom Dependencies
+    - name: Custom Dependencies
       #compatibilityRange: "[2.2.0.RELEASE,2.3.0.M1)"
       content:
         - name: Swagger
@@ -1311,7 +1311,10 @@ initializr:
           description: An in-memory data structure project implementing a distributed, in-memory key-value database with optional durability.
         - name: Exception
           id: exception-id
-          description: One of the powerful mechanism to handle the runtime errors so that normal flow of the application can be maintained.        
+          description: One of the powerful mechanism to handle the runtime errors so that normal flow of the application can be maintained.
+        - name: Nexus
+          id: custom-id-nexus
+          description: A Repository used to access files.        
   types:
     - name: Maven Project
       id: maven-project
@@ -1371,12 +1374,24 @@ initializr:
       id: groovy
       default: false
   bootVersions:
-    - name : Latest SNAPSHOT
-      id: 2.2.0.BUILD-SNAPSHOT
+    - name : 2.3.0 M4
+      id: 2.3.0.M4
       default: false
-    - name : 2.1.1.
-      id: 2.1.1.RELEASE
+    - name : 2.3.0 (SNAPSHOT)
+      id: 2.3.0.BUILD-SNAPSHOT
+      default: false
+    - name : 2.2.7 (SNAPSHOT)
+      id: 2.2.7.BUILD-SNAPSHOT
+      default: false
+    - name : 2.2.6
+      id: 2.2.6.RELEASE
       default: true
+    - name : 2.1.14 (SNAPSHOT)
+      id: 2.1.14.BUILD-SNAPSHOT
+      default: false
+    - name : 2.1.13
+      id: 2.1.13.RELEASE
+      default: false
 
 ---
 

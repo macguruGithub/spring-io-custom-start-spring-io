@@ -44,6 +44,8 @@ import io.spring.start.site.extension.dependency.springsecurity.SpringSecurityRS
 import io.spring.start.site.extension.dependency.springsecurity.SpringSecurityTestBuildCustomizer;
 import io.spring.start.site.extension.dependency.springsession.SpringSessionBuildCustomizer;
 import io.spring.start.site.extension.dependency.swagger.MessageSourceUtilCustomizer;
+import io.spring.start.site.extension.dependency.swagger.NexusBuildCustomizer;
+import io.spring.start.site.extension.dependency.swagger.NexusProjectContributor;
 import io.spring.start.site.extension.dependency.swagger.RedisBuildCustomizer;
 import io.spring.start.site.extension.dependency.swagger.RedisProjectContributor;
 import io.spring.start.site.extension.dependency.swagger.SwaggerBuildCustomizer;
@@ -58,7 +60,7 @@ import io.spring.start.site.extension.dependency.swagger.SwaggerBuildCustomizer;
  */
 @ProjectGenerationConfiguration
 public class DependencyProjectGenerationConfiguration {
-
+	
 	private final InitializrMetadata metadata;
 
 	private final ProjectDescription description;
@@ -193,6 +195,18 @@ public class DependencyProjectGenerationConfiguration {
 	@ConditionalOnRequestedDependency("exception-id")
 	public MessageSourceUtilCustomizer messageSourceUtilCustomizerCustomizer() {
 		return new MessageSourceUtilCustomizer();
+	}
+	
+	@Bean
+	@ConditionalOnRequestedDependency("custom-id-nexus")
+	public NexusBuildCustomizer nexusBuildCustomizer() {
+		return new NexusBuildCustomizer();
+	}
+	
+	@Bean
+	@ConditionalOnRequestedDependency("custom-id-nexus")
+	public NexusProjectContributor nexusProjectContributor() {
+		return new NexusProjectContributor();
 	}
 	
 }

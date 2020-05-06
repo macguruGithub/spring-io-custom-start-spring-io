@@ -2,7 +2,7 @@ spring:
   jackson:
     date-format: MM-dd-yyyy
   datasource:
-    url: jdbc:orcle:thin:@10.0.0.10:1521:NIDEV
+    url: jdbc:oracle:thin:@10.0.0.10:1521:NIDEV
     username: sched6dev
     password: sched6dev1
     driverClassName: oracle.jdbc.OracleDriver

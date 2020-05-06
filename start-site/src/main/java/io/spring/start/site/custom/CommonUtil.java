@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
@@ -12,16 +13,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
+import io.spring.start.site.custom.VO.DBTypeRequest;
+
 public class CommonUtil {
 	public static boolean isDBConfigurationExists(Path targetFilepath) throws FileNotFoundException, IOException {
-		RandomAccessFile aFile = new RandomAccessFile(targetFilepath.toString(),"r"); 
-        FileChannel inChannel = aFile.getChannel();
-        MappedByteBuffer buffer = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, inChannel.size());
-        buffer.load(); 
+		RandomAccessFile aFile = new RandomAccessFile(targetFilepath.toString(), "r");
+		FileChannel inChannel = aFile.getChannel();
+		MappedByteBuffer buffer = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, inChannel.size());
+		buffer.load();
 		String fileData = "";
 		for (int i = 0; i < buffer.limit(); i++) {
-			
-			char c = (char)buffer.get();
+
+			char c = (char) buffer.get();
 			System.out.print(c);
 			fileData = fileData + c;
 		}
@@ -32,19 +35,20 @@ public class CommonUtil {
 			return true;
 		}
 		buffer.clear(); // do something with the data clear/compact it.
-        inChannel.close();
-        aFile.close();
-        return false;
+		inChannel.close();
+		aFile.close();
+		return false;
 	}
-	
-	public static boolean isDirectoryExists(String targetStr, Path projectRoot){
+
+	public static boolean isDirectoryExists(String targetStr, Path projectRoot) {
 		String[] data = targetStr.split("/");
-		return Files.exists(projectRoot.resolve(targetStr.replaceAll("/"+data[data.length-1], "")));
+		return Files.exists(projectRoot.resolve(targetStr.replaceAll("/" + data[data.length - 1], "")));
 	}
-	public static boolean isFileExists(String targetStr, Path projectRoot){
+
+	public static boolean isFileExists(String targetStr, Path projectRoot) {
 		return Files.exists(projectRoot.resolve(targetStr));
 	}
-	
+
 	public static void writeTargetFileFromSrc(Path projectRoot, Path targetFilepath, String src)
 			throws FileNotFoundException, IOException {
 		File file = new File(src);
@@ -64,17 +68,44 @@ public class CommonUtil {
 			Files.write(targetFilepath, "\n\n".getBytes(), StandardOpenOption.APPEND);
 		Files.write(targetFilepath, bytes, StandardOpenOption.APPEND);
 	}
-	
+
+	public static void writeFileForDB(DBTypeRequest typeRequest) throws FileNotFoundException, IOException {
+		File file = new File("src/main/resources/config/nexus.yml");
+		FileWriter writer = new FileWriter(file);
+		if (typeRequest.getDbType().equals("mysql")) {
+			writer.write("spring.datasource.url: jdbc:mysql://${MYSQL_HOST:" + typeRequest.getHostName() + "}:3306/"
+					+ typeRequest.getDbName() + "\r\n");
+		} else if (typeRequest.getDbType().equals("mssql")) {
+			writer.write("spring.datasource.url: jdbc:sqlserver://" + typeRequest.getHostName() + ";databaseName="
+					+ typeRequest.getDbName() + "\r\n");
+		} else if (typeRequest.getDbType().equals("oracle")) {
+			writer.write("spring.datasource.url: jdbc:oracle:thin:@" + typeRequest.getHostName() + "\r\n");
+		}
+		String username = typeRequest.getUsername()!=null ? typeRequest.getUsername(): "username" ;
+		String password = typeRequest.getPassword()!=null ? typeRequest.getPassword(): "password" ;
+		writer.write("spring.datasource.username: " + username + "\r\n");
+		writer.write("spring.datasource.password: " + password + "\r\n");
+
+		if (typeRequest.getIsHibernate() != null && typeRequest.getIsHibernate().equals("yes")) {
+			writer.write("spring.jpa.show-sql: " + typeRequest.getShowsql() + "\r\n");
+			writer.write("spring.jpa.hibernate.ddl-auto: " + typeRequest.getDdlauto() + "\r\n");
+			writer.write("spring.jpa.hibernate.dialect: org.hibernate.dialect." + typeRequest.getDialect() + "\r\n");
+		}
+
+		writer.close();
+
+	}
+
 	public static Path createFile(Path projectRoot, String targetStr) throws IOException {
 		Path targetFilepath;
-		if(!CommonUtil.isFileExists(targetStr, projectRoot)) {
-			if(!CommonUtil.isDirectoryExists(targetStr, projectRoot)) {
+		if (!CommonUtil.isFileExists(targetStr, projectRoot)) {
+			if (!CommonUtil.isDirectoryExists(targetStr, projectRoot)) {
 				String[] data = targetStr.split("/");
-				Files.createDirectories(projectRoot.resolve(targetStr.replaceAll("/"+data[data.length-1], "")));
+				Files.createDirectories(projectRoot.resolve(targetStr.replaceAll("/" + data[data.length - 1], "")));
 			}
 			targetFilepath = projectRoot.resolve(targetStr);
 			Files.createFile(targetFilepath);
-		}else {
+		} else {
 			targetFilepath = projectRoot.resolve(targetStr);
 		}
 		return targetFilepath;
