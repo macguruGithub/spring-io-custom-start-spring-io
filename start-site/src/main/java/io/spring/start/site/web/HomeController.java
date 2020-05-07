@@ -16,8 +16,8 @@
 package io.spring.start.site.web;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -73,48 +73,48 @@ public class HomeController {
 	@ResponseBody
 	public DBValuesResponse getHibernateValues(@RequestParam(value = "dbType") String dbType) {
 
-		List<String> dialects;
+		Map<String,String> dialects;
 		DBValuesResponse dbVal = new DBValuesResponse();
 		if (dbType.equals("mysql")) {
-			dialects = new ArrayList<String>();
-			dialects.add("MySQLDialect");
-			dialects.add("MySQLInnoDBDialect");
-			dialects.add("MySQLMyISAMDialect");
-			dialects.add("MySQL5Dialect");
-			dialects.add("MySQL5InnoDBDialect");
-			dialects.add("MySQL8Dialect");
+			dialects = new HashMap<String, String>();
+			dialects.put("MySQLDialect", "An SQL dialect for MySQL (prior to 5.x).");
+			dialects.put("MySQLInnoDBDialect", "Deprecated Use “hibernate.dialect.storage_engine=innodb” environment variable or JVM system property instead.");
+			dialects.put("MySQLMyISAMDialect", "Deprecated Use “hibernate.dialect.storage_engine=myisam” environment variable or JVM system property instead.");
+			dialects.put("MySQL5Dialect", "An SQL dialect for MySQL 5.x specific features.");
+			dialects.put("MySQL5InnoDBDialect", "Deprecated Use “hibernate.dialect.storage_engine=innodb” environment variable or JVM system property instead.");
+			dialects.put("MySQL8Dialect", "An SQL dialect for MySQL 8.x specific features.");
 
 			dbVal.setDialects(dialects);
 			dbVal.setId("mysql-orm-id");
 		}
 		if (dbType.equals("mssql")) {
-			dialects = new ArrayList<String>();
-			dialects.add("SQLServerDialect");
-			dialects.add("SQLServer2005Dialect");
-			dialects.add("SQLServer2008Dialect");
-			dialects.add("SQLServer2012Dialect");
+			dialects = new HashMap<String, String>();
+			dialects.put("SQLServerDialect", "A dialect for Microsoft SQL Server 2000");
+			dialects.put("SQLServer2005Dialect", "A dialect for Microsoft SQL 2005.");
+			dialects.put("SQLServer2008Dialect", "A dialect for Microsoft SQL Server 2008 with JDBC Driver 3.0 and above");
+			dialects.put("SQLServer2012Dialect", "Microsoft SQL Server 2012 Dialect");
 
 			dbVal.setDialects(dialects);
 			dbVal.setId("mssql-id");
 		}
 		if (dbType.equals("oracle")) {
-			dialects = new ArrayList<String>();
-			dialects.add("Oracle8iDialect");
-			dialects.add("Oracle9iDialect");
-			dialects.add("Oracle10gDialect");
-			dialects.add("Oracle12cDialect");
-			dialects.add("OracleTypesHelper");
+			dialects = new HashMap<String, String>();
+			dialects.put("Oracle8iDialect", "A dialect for Oracle 8i.");
+			dialects.put("Oracle9iDialect", "A dialect for Oracle 9i databases.");
+			dialects.put("Oracle10gDialect", "A dialect specifically for use with Oracle 10g.");
+			dialects.put("Oracle12cDialect", "An SQL dialect for Oracle 12c.");
+			dialects.put("OracleTypesHelper", "A Helper for dealing with the OracleTypes class");
 
 			dbVal.setDialects(dialects);
 			dbVal.setId("ojdbc-id");
 		}
 
-		List<String> ddlAuto = new ArrayList<String>();
-		ddlAuto.add("validate");
-		ddlAuto.add("update");
-		ddlAuto.add("create");
-		ddlAuto.add("create-drop");
-		ddlAuto.add("none");
+		Map<String,String> ddlAuto = new HashMap<String, String>();
+		ddlAuto.put("validate", "validate the schema, makes no changes to the database.");
+		ddlAuto.put("update", "update the schema.");
+		ddlAuto.put("create", "creates the schema, destroying previous data.");
+		ddlAuto.put("create-drop", "drop the schema when the SessionFactory is closed explicitly, typically when the application is stopped.");
+		ddlAuto.put("none", "does nothing with the schema, makes no changes to the database");
 
 		dbVal.setDdlAuto(ddlAuto);
 

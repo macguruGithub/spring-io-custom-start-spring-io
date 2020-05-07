@@ -9,7 +9,7 @@ public class OJDBCBuildCustomizer implements BuildCustomizer<MavenBuild> {
 	@Override
 	public void customize(MavenBuild build) {
 		build.dependencies().add("data-jpa");
-		build.dependencies().add("db-driver", "com.db", "oracle-driver", DependencyScope.COMPILE, "11.1.0.7");
+		//build.dependencies().add("db-driver", "com.db", "oracle-driver", DependencyScope.COMPILE, "11.1.0.7");
 		build.plugins().add("org.apache.maven.plugins", "maven-dependency-plugin",plugin->{
 			plugin.execution("id", executions ->{
 				executions.goal("copy");
@@ -19,9 +19,9 @@ public class OJDBCBuildCustomizer implements BuildCustomizer<MavenBuild> {
 				configuration.add("overWriteReleases", "false").add("overWriteSnapshots", "true");
 				configuration.configure("artifactItems", artifactItems->{
 					artifactItems.configure("artifactItem", artifactItem->{
-						artifactItem.add("groupId", "com.db");
-						artifactItem.add("artifactId", "rdbms");
-						artifactItem.add("version", "11.1.0.7");
+						artifactItem.add("groupId", "com.oracle");
+						artifactItem.add("artifactId", "ojdbc6");
+						artifactItem.add("version", "11.2.0.3");
 						artifactItem.add("type", "jar");
 						artifactItem.add("overWrite", "false");
 						artifactItem.add("outputDirectory", "${project.basedir}/lib");

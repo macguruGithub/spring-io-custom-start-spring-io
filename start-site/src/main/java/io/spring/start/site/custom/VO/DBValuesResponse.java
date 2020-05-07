@@ -1,7 +1,7 @@
 package io.spring.start.site.custom.VO;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 
 public class DBValuesResponse implements Serializable {
 
@@ -12,9 +12,9 @@ public class DBValuesResponse implements Serializable {
 
 	private String id;
 
-	private List<String> dialects;
+	private Map<String,String> dialects;
 	
-	private List<String> ddlAuto;
+	private Map<String,String> ddlAuto;
 
 	public String getId() {
 		return id;
@@ -24,19 +24,19 @@ public class DBValuesResponse implements Serializable {
 		this.id = id;
 	}
 
-	public List<String> getDialects() {
+	public Map<String, String> getDialects() {
 		return dialects;
 	}
 
-	public void setDialects(List<String> dialects) {
+	public void setDialects(Map<String, String> dialects) {
 		this.dialects = dialects;
 	}
 
-	public List<String> getDdlAuto() {
+	public Map<String, String> getDdlAuto() {
 		return ddlAuto;
 	}
 
-	public void setDdlAuto(List<String> ddlAuto) {
+	public void setDdlAuto(Map<String, String> ddlAuto) {
 		this.ddlAuto = ddlAuto;
 	}
 
