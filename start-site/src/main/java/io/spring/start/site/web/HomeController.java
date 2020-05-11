@@ -16,7 +16,9 @@
 package io.spring.start.site.web;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,10 +33,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import io.spring.start.site.custom.CommonUtil;
 import io.spring.start.site.custom.VO.DBTypeRequest;
 import io.spring.start.site.custom.VO.DBValuesResponse;
+import io.spring.start.site.custom.VO.DependancyList;
+import io.spring.start.site.custom.VO.DependancyResp;
+import io.spring.start.site.custom.VO.DependancyValues;
+import io.spring.start.site.custom.VO.NexusDependancyItems;
+import io.spring.start.site.custom.VO.NexusDependancyResponse;
 
 /**
  * Main Controller.
@@ -48,14 +56,37 @@ public class HomeController {
 	@Autowired
 	HttpServletRequest request;
 
-	@GetMapping(path = "/nexusSetup", produces = MediaType.TEXT_PLAIN_VALUE)
+	@GetMapping(path = "/nexusSetup", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String getNexusRepo() {
-		// @RequestParam (value = "name") String name
-		String name = "Sampleeeeeeeeee";
-//		HttpSession session = request.getSession(true);
-//		session.setAttribute("name", name);
-		return name;
+	public DependancyResp getNexusRepo() {
+		 final String uri = "http://localhost:8081/service/rest/v1/search?repository=maven-releases";
+	     
+		    RestTemplate restTemplate = new RestTemplate();
+		    NexusDependancyResponse result = restTemplate.getForObject(uri, NexusDependancyResponse.class);
+		     
+		    DependancyResp response = new DependancyResp();
+		    List<DependancyValues> valuesList = new ArrayList<DependancyValues>();
+		    DependancyValues values = new DependancyValues();
+		    List<DependancyList> list = new ArrayList<DependancyList>();
+		    DependancyList dependancyList;
+		    
+		    
+		    for (NexusDependancyItems items : result.getItems()) {
+		    	dependancyList = new DependancyList();
+				dependancyList.setName(items.getName());
+				dependancyList.setId(items.getName());
+				dependancyList.setDescription("Taken from " + items.getRepository() + " Repository.");
+				list.add(dependancyList);				
+			}
+		    
+		    values.setName("Nexus Dependancies");
+		    values.setValues(list);
+		    valuesList.add(values);
+		    
+		    response.setType("hierarchical-multi-select");
+		    response.setValues(valuesList);
+		    
+		return response;
 	}
 
 	@RequestMapping(path = "/writeDBValues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
