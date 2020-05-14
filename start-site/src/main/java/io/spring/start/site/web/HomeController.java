@@ -28,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,8 +42,10 @@ import io.spring.start.site.custom.VO.DBValuesResponse;
 import io.spring.start.site.custom.VO.DependancyList;
 import io.spring.start.site.custom.VO.DependancyResp;
 import io.spring.start.site.custom.VO.DependancyValues;
+import io.spring.start.site.custom.VO.EnvironmentTypeRequest;
 import io.spring.start.site.custom.VO.NexusDependancyItems;
 import io.spring.start.site.custom.VO.NexusDependancyResponse;
+import io.spring.start.site.extension.envlogback.LogbackProjectContributor;
 
 /**
  * Main Controller.
@@ -59,33 +62,32 @@ public class HomeController {
 	@GetMapping(path = "/nexusSetup", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public DependancyResp getNexusRepo() {
-		 final String uri = "http://localhost:8081/service/rest/v1/search?repository=maven-releases";
-	     
-		    RestTemplate restTemplate = new RestTemplate();
-		    NexusDependancyResponse result = restTemplate.getForObject(uri, NexusDependancyResponse.class);
-		     
-		    DependancyResp response = new DependancyResp();
-		    List<DependancyValues> valuesList = new ArrayList<DependancyValues>();
-		    DependancyValues values = new DependancyValues();
-		    List<DependancyList> list = new ArrayList<DependancyList>();
-		    DependancyList dependancyList;
-		    
-		    
-		    for (NexusDependancyItems items : result.getItems()) {
-		    	dependancyList = new DependancyList();
-				dependancyList.setName(items.getName());
-				dependancyList.setId(items.getName());
-				dependancyList.setDescription("Taken from " + items.getRepository() + " Repository.");
-				list.add(dependancyList);				
-			}
-		    
-		    values.setName("Nexus Dependancies");
-		    values.setValues(list);
-		    valuesList.add(values);
-		    
-		    response.setType("hierarchical-multi-select");
-		    response.setValues(valuesList);
-		    
+		final String uri = "http://localhost:8081/service/rest/v1/search?repository=maven-releases";
+
+		RestTemplate restTemplate = new RestTemplate();
+		NexusDependancyResponse result = restTemplate.getForObject(uri, NexusDependancyResponse.class);
+
+		DependancyResp response = new DependancyResp();
+		List<DependancyValues> valuesList = new ArrayList<DependancyValues>();
+		DependancyValues values = new DependancyValues();
+		List<DependancyList> list = new ArrayList<DependancyList>();
+		DependancyList dependancyList;
+
+		for (NexusDependancyItems items : result.getItems()) {
+			dependancyList = new DependancyList();
+			dependancyList.setName(items.getName());
+			dependancyList.setId(items.getName());
+			dependancyList.setDescription("Taken from " + items.getRepository() + " Repository.");
+			list.add(dependancyList);
+		}
+
+		values.setName("Nexus Dependancies");
+		values.setValues(list);
+		valuesList.add(values);
+
+		response.setType("hierarchical-multi-select");
+		response.setValues(valuesList);
+
 		return response;
 	}
 
@@ -104,15 +106,18 @@ public class HomeController {
 	@ResponseBody
 	public DBValuesResponse getHibernateValues(@RequestParam(value = "dbType") String dbType) {
 
-		Map<String,String> dialects;
+		Map<String, String> dialects;
 		DBValuesResponse dbVal = new DBValuesResponse();
 		if (dbType.equals("mysql")) {
 			dialects = new HashMap<String, String>();
 			dialects.put("MySQLDialect", "An SQL dialect for MySQL (prior to 5.x).");
-			dialects.put("MySQLInnoDBDialect", "Deprecated Use “hibernate.dialect.storage_engine=innodb” environment variable or JVM system property instead.");
-			dialects.put("MySQLMyISAMDialect", "Deprecated Use “hibernate.dialect.storage_engine=myisam” environment variable or JVM system property instead.");
+			dialects.put("MySQLInnoDBDialect",
+					"Deprecated Use “hibernate.dialect.storage_engine=innodb” environment variable or JVM system property instead.");
+			dialects.put("MySQLMyISAMDialect",
+					"Deprecated Use “hibernate.dialect.storage_engine=myisam” environment variable or JVM system property instead.");
 			dialects.put("MySQL5Dialect", "An SQL dialect for MySQL 5.x specific features.");
-			dialects.put("MySQL5InnoDBDialect", "Deprecated Use “hibernate.dialect.storage_engine=innodb” environment variable or JVM system property instead.");
+			dialects.put("MySQL5InnoDBDialect",
+					"Deprecated Use “hibernate.dialect.storage_engine=innodb” environment variable or JVM system property instead.");
 			dialects.put("MySQL8Dialect", "An SQL dialect for MySQL 8.x specific features.");
 
 			dbVal.setDialects(dialects);
@@ -122,7 +127,8 @@ public class HomeController {
 			dialects = new HashMap<String, String>();
 			dialects.put("SQLServerDialect", "A dialect for Microsoft SQL Server 2000");
 			dialects.put("SQLServer2005Dialect", "A dialect for Microsoft SQL 2005.");
-			dialects.put("SQLServer2008Dialect", "A dialect for Microsoft SQL Server 2008 with JDBC Driver 3.0 and above");
+			dialects.put("SQLServer2008Dialect",
+					"A dialect for Microsoft SQL Server 2008 with JDBC Driver 3.0 and above");
 			dialects.put("SQLServer2012Dialect", "Microsoft SQL Server 2012 Dialect");
 
 			dbVal.setDialects(dialects);
@@ -140,11 +146,12 @@ public class HomeController {
 			dbVal.setId("ojdbc-id");
 		}
 
-		Map<String,String> ddlAuto = new HashMap<String, String>();
+		Map<String, String> ddlAuto = new HashMap<String, String>();
 		ddlAuto.put("validate", "validate the schema, makes no changes to the database.");
 		ddlAuto.put("update", "update the schema.");
 		ddlAuto.put("create", "creates the schema, destroying previous data.");
-		ddlAuto.put("create-drop", "drop the schema when the SessionFactory is closed explicitly, typically when the application is stopped.");
+		ddlAuto.put("create-drop",
+				"drop the schema when the SessionFactory is closed explicitly, typically when the application is stopped.");
 		ddlAuto.put("none", "does nothing with the schema, makes no changes to the database");
 
 		dbVal.setDdlAuto(ddlAuto);
@@ -155,6 +162,14 @@ public class HomeController {
 	@GetMapping(path = "/", produces = MediaType.TEXT_HTML_VALUE)
 	public String home() {
 		return "forward:index.html";
+	}
+
+	@RequestMapping(path = "/logback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public void generateLogbackEnvFile(@RequestBody EnvironmentTypeRequest environmentTypeRequest) {
+		LogbackProjectContributor logbackProjectContributor = new LogbackProjectContributor();
+		logbackProjectContributor.generateEnvLogBackFiles(environmentTypeRequest);
+
 	}
 
 }

@@ -13,6 +13,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import io.spring.start.site.custom.VO.DBTypeRequest;
 
 public class CommonUtil {
@@ -81,8 +85,8 @@ public class CommonUtil {
 		} else if (typeRequest.getDbType().equals("oracle")) {
 			writer.write("spring.datasource.url: jdbc:oracle:thin:@" + typeRequest.getHostName() + "\r\n");
 		}
-		String username = typeRequest.getUsername()!=null ? typeRequest.getUsername(): "username" ;
-		String password = typeRequest.getPassword()!=null ? typeRequest.getPassword(): "password" ;
+		String username = typeRequest.getUsername() != null ? typeRequest.getUsername() : "username";
+		String password = typeRequest.getPassword() != null ? typeRequest.getPassword() : "password";
 		writer.write("spring.datasource.username: " + username + "\r\n");
 		writer.write("spring.datasource.password: " + password + "\r\n");
 
@@ -104,10 +108,47 @@ public class CommonUtil {
 				Files.createDirectories(projectRoot.resolve(targetStr.replaceAll("/" + data[data.length - 1], "")));
 			}
 			targetFilepath = projectRoot.resolve(targetStr);
+
 			Files.createFile(targetFilepath);
 		} else {
 			targetFilepath = projectRoot.resolve(targetStr);
 		}
 		return targetFilepath;
 	}
+
+	public static Node getLogLevel(Document doc, String name, String value) {
+
+		Element logger = doc.createElement("logger");
+		Element level = doc.createElement("level");
+		level.setAttribute("name", name);
+		logger.setAttribute("value", value);
+		logger.appendChild(level);
+		return logger;
+	}
+
+	public static Node createElementWithAttr(Document doc, String eleName, String key, String value) {
+		Element element = doc.createElement(eleName);
+		element.setAttribute(key, value);
+
+		return element;
+
+	}
+
+	public static Node getAppenderReference(Document doc, String value) {
+
+		Element appender_ref = doc.createElement("appender-ref");
+		appender_ref.setAttribute("ref", value);
+		return appender_ref;
+
+	}
+
+	public static Node createElement(Document doc) {
+		Element config = doc.createElement("contextListener");
+		config.setAttribute("class", "ch.qos.logback.clasic.jul.LevelChangePropagator");
+		Element resetJul = doc.createElement("resetJUL");
+		resetJul.appendChild(doc.createTextNode("true"));
+		config.appendChild(resetJul);
+		return config;
+	}
+
 }

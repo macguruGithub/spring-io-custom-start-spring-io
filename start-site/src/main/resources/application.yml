@@ -215,6 +215,7 @@ initializr:
             - rel: guide
               href: https://spring.io/guides/gs/accessing-data-rest/
               description: Accessing JPA Data with REST
+              
             - rel: guide
               href: https://spring.io/guides/gs/accessing-neo4j-data-rest/
               description: Accessing Neo4j Data with REST
@@ -1314,7 +1315,10 @@ initializr:
           description: One of the powerful mechanism to handle the runtime errors so that normal flow of the application can be maintained.
         - name: Nexus
           id: custom-id-nexus
-          description: A Repository used to access files.        
+          description: A Repository used to access files.    
+        - name: logback
+          id: env-logback
+          description: used to generate env specific applicaiton yaml and logback files    
   types:
     - name: Maven Project
       id: maven-project

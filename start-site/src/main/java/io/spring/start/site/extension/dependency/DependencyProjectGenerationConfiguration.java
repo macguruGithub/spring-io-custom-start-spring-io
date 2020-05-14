@@ -49,10 +49,12 @@ import io.spring.start.site.extension.dependency.swagger.NexusProjectContributor
 import io.spring.start.site.extension.dependency.swagger.RedisBuildCustomizer;
 import io.spring.start.site.extension.dependency.swagger.RedisProjectContributor;
 import io.spring.start.site.extension.dependency.swagger.SwaggerBuildCustomizer;
+import io.spring.start.site.extension.envlogback.LogbackBuildCustomizer;
+import io.spring.start.site.extension.envlogback.LogbackProjectContributor;
 
 /**
- * {@link ProjectGenerationConfiguration} for customizations relevant to selected
- * dependencies.
+ * {@link ProjectGenerationConfiguration} for customizations relevant to
+ * selected dependencies.
  *
  * @author Madhura Bhave
  * @author Stephane Nicoll
@@ -60,7 +62,7 @@ import io.spring.start.site.extension.dependency.swagger.SwaggerBuildCustomizer;
  */
 @ProjectGenerationConfiguration
 public class DependencyProjectGenerationConfiguration {
-	
+
 	private final InitializrMetadata metadata;
 
 	private final ProjectDescription description;
@@ -154,7 +156,7 @@ public class DependencyProjectGenerationConfiguration {
 	public JenkinsScriptBuildCustomizer jenkinsBuildCustomizer() {
 		return new JenkinsScriptBuildCustomizer();
 	}
-	
+
 	@Bean
 	@ConditionalOnRequestedDependency("ojdbc-id")
 	public OJDBCProjectContributor ojdbcProjectContributor() {
@@ -166,13 +168,13 @@ public class DependencyProjectGenerationConfiguration {
 	public OJDBCBuildCustomizer ojdbcBuildCustomizer() {
 		return new OJDBCBuildCustomizer();
 	}
-	
+
 	@Bean
 	@ConditionalOnRequestedDependency("kube-script-id")
 	public KubernetesScriptBuildCustomizer kubernetesBuildCustomizer() {
 		return new KubernetesScriptBuildCustomizer();
 	}
-	
+
 	@Bean
 	@ConditionalOnRequestedDependency("kube-script-id")
 	public KubernetesScriptProjectContributor kubernetesProjectContributor() {
@@ -184,29 +186,42 @@ public class DependencyProjectGenerationConfiguration {
 	public RedisBuildCustomizer redisBuildCustomizer() {
 		return new RedisBuildCustomizer();
 	}
-	
+
 	@Bean
 	@ConditionalOnRequestedDependency("redis-id")
 	public RedisProjectContributor redisProjectContributor() {
 		return new RedisProjectContributor();
 	}
-	
+
 	@Bean
 	@ConditionalOnRequestedDependency("exception-id")
 	public MessageSourceUtilCustomizer messageSourceUtilCustomizerCustomizer() {
 		return new MessageSourceUtilCustomizer();
 	}
-	
+
 	@Bean
 	@ConditionalOnRequestedDependency("custom-id-nexus")
 	public NexusBuildCustomizer nexusBuildCustomizer() {
 		return new NexusBuildCustomizer();
 	}
-	
+
 	@Bean
 	@ConditionalOnRequestedDependency("custom-id-nexus")
 	public NexusProjectContributor nexusProjectContributor() {
 		return new NexusProjectContributor();
 	}
-	
+
+	@Bean
+	@ConditionalOnRequestedDependency("env-logback")
+	public LogbackBuildCustomizer logbackBuildCustomizer() {
+		return new LogbackBuildCustomizer();
+	}
+
+	@Bean
+	@ConditionalOnRequestedDependency("env-logback")
+	public LogbackProjectContributor logbackProjectContributor() {
+		return new LogbackProjectContributor();
+
+	}
+
 }
