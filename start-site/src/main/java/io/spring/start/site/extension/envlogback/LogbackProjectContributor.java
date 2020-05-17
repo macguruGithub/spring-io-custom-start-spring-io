@@ -74,7 +74,6 @@ public class LogbackProjectContributor implements ProjectContributor {
 			String[] files = new File(folderPath).list();
 			for (String file : files) {
 				File currentFile = new File(new File(folderPath).getPath(), "/" + file);
-				System.out.println("current file::::::::::::" + currentFile);
 				System.out.println("is Exists" + currentFile.exists());
 				currentFile.delete();
 			}
