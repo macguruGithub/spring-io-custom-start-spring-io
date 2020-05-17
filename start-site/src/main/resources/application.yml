@@ -1285,33 +1285,43 @@ initializr:
     - name: Custom Dependencies
       #compatibilityRange: "[2.2.0.RELEASE,2.3.0.M1)"
       content:
-        - id: swagger-id
+        - name: Swagger
+          id: swagger-id
           description: describe and document RESTful APIs
-        - id: mysql-orm-id
+        - name: ORM mysql DB
+          id: mysql-orm-id
           description: metadata descriptor is used to connect object code to a relational database using Mysql
           groupId: mysql
           artifactId: mysql-connector-java
           scope: runtime
-        - id: mssql-id
+        - name: MS SQL
+          id: mssql-id
           description: A Microsoft sql server for DB Connectivity.
-        - id: jenkins-scripts-id
+        - name: Jenkins Scripts
+          id: jenkins-scripts-id
           description: automate the parts of software development related to building, testing, and deploying, facilitating continuous integration and continuous delivery
-        - id: ojdbc-id
+        - name: ORM Oracle DB
+          id: ojdbc-id
           description: metadata descriptor is used to connect object code to a relational database using Oracle
           groupId: com.oracle
           artifactId: ojdbc6
           scope: system
           #systemPath: ${project.basedir}/lib/ojdbc6-11.2.0.3.jar
-        - id: kube-script-id
+        - name: Kubernetes Script
+          id: kube-script-id
           description: open-source container-orchestration system for automating application deployment, scaling, and management.
-        - id: redis-id
+        - name: Redis
+          id: redis-id
           description: An in-memory data structure project implementing a distributed, in-memory key-value database with optional durability.
-        - id: exception-id
+        - name: Exception
+          id: exception-id
           description: One of the powerful mechanism to handle the runtime errors so that normal flow of the application can be maintained.
-        - id: custom-id-nexus
+        - name: Nexus
+          id: custom-id-nexus
           description: A Repository used to access files.    
-        - id: env-logback
-          description: used to generate env specific applicaiton yaml and logback files    
+        - name: logback
+          id: env-logback
+          description: used to generate env specific applicaiton yaml and logback files
   types:
     - name: Maven Project
       id: maven-project
