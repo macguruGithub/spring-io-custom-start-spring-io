@@ -26,6 +26,8 @@ import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import io.spring.initializr.generator.spring.build.gradle.ConditionalOnGradleVersion;
 import io.spring.initializr.metadata.InitializrMetadata;
+import io.spring.start.site.extension.dependency.db.MSSQLBuildCustomizer;
+import io.spring.start.site.extension.dependency.db.MSSQLProjectContributor;
 import io.spring.start.site.extension.dependency.db.MysqlORMBuildCustomizer;
 import io.spring.start.site.extension.dependency.db.MysqlORMProjectContributor;
 import io.spring.start.site.extension.dependency.db.OJDBCBuildCustomizer;
@@ -45,7 +47,6 @@ import io.spring.start.site.extension.dependency.springsecurity.SpringSecurityTe
 import io.spring.start.site.extension.dependency.springsession.SpringSessionBuildCustomizer;
 import io.spring.start.site.extension.dependency.swagger.MessageSourceUtilCustomizer;
 import io.spring.start.site.extension.dependency.swagger.NexusBuildCustomizer;
-import io.spring.start.site.extension.dependency.swagger.NexusProjectContributor;
 import io.spring.start.site.extension.dependency.swagger.RedisBuildCustomizer;
 import io.spring.start.site.extension.dependency.swagger.RedisProjectContributor;
 import io.spring.start.site.extension.dependency.swagger.SwaggerBuildCustomizer;
@@ -170,6 +171,18 @@ public class DependencyProjectGenerationConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnRequestedDependency("mssql-id")
+	public MSSQLProjectContributor mssqlProjectContributor() {
+		return new MSSQLProjectContributor();
+	}
+
+	@Bean
+	@ConditionalOnRequestedDependency("mssql-id")
+	public MSSQLBuildCustomizer mssqlBuildCustomizer() {
+		return new MSSQLBuildCustomizer();
+	}
+	
+	@Bean
 	@ConditionalOnRequestedDependency("kube-script-id")
 	public KubernetesScriptBuildCustomizer kubernetesBuildCustomizer() {
 		return new KubernetesScriptBuildCustomizer();
@@ -203,12 +216,6 @@ public class DependencyProjectGenerationConfiguration {
 	@ConditionalOnRequestedDependency("custom-id-nexus")
 	public NexusBuildCustomizer nexusBuildCustomizer() {
 		return new NexusBuildCustomizer();
-	}
-
-	@Bean
-	@ConditionalOnRequestedDependency("custom-id-nexus")
-	public NexusProjectContributor nexusProjectContributor() {
-		return new NexusProjectContributor();
 	}
 
 	@Bean

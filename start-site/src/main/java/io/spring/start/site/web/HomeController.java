@@ -28,7 +28,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,6 +44,7 @@ import io.spring.start.site.custom.VO.DependancyValues;
 import io.spring.start.site.custom.VO.EnvironmentTypeRequest;
 import io.spring.start.site.custom.VO.NexusDependancyItems;
 import io.spring.start.site.custom.VO.NexusDependancyResponse;
+import io.spring.start.site.extension.dependency.swagger.NexusBuildCustomizer;
 import io.spring.start.site.extension.envlogback.LogbackProjectContributor;
 
 /**
@@ -76,7 +76,7 @@ public class HomeController {
 		for (NexusDependancyItems items : result.getItems()) {
 			dependancyList = new DependancyList();
 			dependancyList.setName(items.getName());
-			dependancyList.setId(items.getName());
+			dependancyList.setId(items.getName() + "-nexus");
 			dependancyList.setDescription("Taken from " + items.getRepository() + " Repository.");
 			list.add(dependancyList);
 		}
@@ -91,6 +91,13 @@ public class HomeController {
 		return response;
 	}
 
+	@RequestMapping(path = "/iterateNexusDependancies", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public void dependancyIteration(@RequestBody List<DependancyList> list) {
+		NexusBuildCustomizer customize = new NexusBuildCustomizer();
+		customize.getNexusDependancyList(list);
+	}
+	
 	@RequestMapping(path = "/writeDBValues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public void writeDBValuesInYml(@RequestBody DBTypeRequest typeRequest) {
@@ -167,6 +174,7 @@ public class HomeController {
 	@RequestMapping(path = "/logback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public void generateLogbackEnvFile(@RequestBody EnvironmentTypeRequest environmentTypeRequest) {
+		System.out.println("Type Request -> "+ environmentTypeRequest.toString());
 		LogbackProjectContributor logbackProjectContributor = new LogbackProjectContributor();
 		logbackProjectContributor.generateEnvLogBackFiles(environmentTypeRequest);
 

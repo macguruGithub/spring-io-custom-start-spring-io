@@ -7,5 +7,5 @@ spring:
       use-key-prefix: true
   redis:
     host: 127.0.0.1
-    password: sched62019
+    password: 
     port: 6379

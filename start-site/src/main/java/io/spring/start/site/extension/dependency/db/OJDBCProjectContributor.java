@@ -10,12 +10,12 @@ public class OJDBCProjectContributor implements ProjectContributor {
 
 	@Override
 	public void contribute(Path projectRoot) throws IOException {
+
 		String targetStr = "src/main/resources/application.xml";
-		String srcStr = "src/main/resources/config/db/ojdbc.yml";
+		String srcStr = "src/main/resources/config/db/dbConfig.yml";
 		Path targetFilepath = null;
 		targetFilepath = CommonUtil.createFile(projectRoot, targetStr);
-		if (!CommonUtil.isDBConfigurationExists(targetFilepath)) {
-			CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, srcStr);
-		}
+		CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, srcStr);
+
 	}
 }

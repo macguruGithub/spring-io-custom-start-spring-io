@@ -74,19 +74,21 @@ public class CommonUtil {
 	}
 
 	public static void writeFileForDB(DBTypeRequest typeRequest) throws FileNotFoundException, IOException {
-		File file = new File("src/main/resources/config/nexus.yml");
+		File file = new File("src/main/resources/config/db/dbConfig.yml");
 		FileWriter writer = new FileWriter(file);
+		String hostName = typeRequest.getHostName() != null ? typeRequest.getHostName() : "";
+		String dbName = typeRequest.getDbName() != null ? typeRequest.getDbName() : "";
 		if (typeRequest.getDbType().equals("mysql")) {
-			writer.write("spring.datasource.url: jdbc:mysql://${MYSQL_HOST:" + typeRequest.getHostName() + "}:3306/"
-					+ typeRequest.getDbName() + "\r\n");
+			writer.write("spring.datasource.url: jdbc:mysql://${MYSQL_HOST:" + hostName + "}:3306/"
+					+ dbName + "\r\n");
 		} else if (typeRequest.getDbType().equals("mssql")) {
-			writer.write("spring.datasource.url: jdbc:sqlserver://" + typeRequest.getHostName() + ";databaseName="
-					+ typeRequest.getDbName() + "\r\n");
+			writer.write("spring.datasource.url: jdbc:sqlserver://" + hostName + ";databaseName="
+					+ dbName + "\r\n");
 		} else if (typeRequest.getDbType().equals("oracle")) {
-			writer.write("spring.datasource.url: jdbc:oracle:thin:@" + typeRequest.getHostName() + "\r\n");
+			writer.write("spring.datasource.url: jdbc:oracle:thin:@" + hostName + "\r\n");
 		}
-		String username = typeRequest.getUsername() != null ? typeRequest.getUsername() : "username";
-		String password = typeRequest.getPassword() != null ? typeRequest.getPassword() : "password";
+		String username = typeRequest.getUsername() != null ? typeRequest.getUsername() : "";
+		String password = typeRequest.getPassword() != null ? typeRequest.getPassword() : "";
 		writer.write("spring.datasource.username: " + username + "\r\n");
 		writer.write("spring.datasource.password: " + password + "\r\n");
 
