@@ -6,6 +6,7 @@ public class EnvironmentTypeRequest {
 	// private List<String> envTypeList;
 	private Map<String, LogLevels> envTypeList;
 	private String applicationName;
+	private String port;
 
 	public EnvironmentTypeRequest setEnvTypeList(Map<String, LogLevels> envTypeList) {
 
@@ -23,8 +24,17 @@ public class EnvironmentTypeRequest {
 		return this;
 	}
 
+	public EnvironmentTypeRequest setPort(String port) {
+		this.port = port;
+		return this;
+	}
+
 	public String getApplicationName() {
 		return this.applicationName;
+	}
+
+	public String getPort() {
+		return this.port;
 	}
 
 }

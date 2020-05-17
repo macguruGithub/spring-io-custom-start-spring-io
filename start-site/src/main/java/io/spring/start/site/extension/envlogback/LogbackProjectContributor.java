@@ -31,6 +31,7 @@ import io.spring.start.site.custom.VO.ServerConfigVO;
 import io.spring.start.site.custom.VO.ServletConfigVo;
 
 public class LogbackProjectContributor implements ProjectContributor {
+
 	public static String localFilePath = "src/main/resources/logging";
 	public static String yamlFolderPath = "src/main/resources/config/envyaml";
 
@@ -38,13 +39,15 @@ public class LogbackProjectContributor implements ProjectContributor {
 	public void contribute(Path projectRoot) throws IOException {
 		String envLogTargetStr = "src/main/resources/logging/";
 		String envLogSrcStr = "src/main/resources/logging/";
-
 		File envLogFolder = new File(localFilePath);
 		String[] envFilesList = envLogFolder.list();
-		for (int i = 0; i < envFilesList.length; i++) {
-			Path targetFilepath = null;
-			targetFilepath = CommonUtil.createFile(projectRoot, envLogTargetStr + envFilesList[i]);
-			CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, envLogSrcStr + envFilesList[i]);
+		if (envFilesList != null) {
+			for (int i = 0; i < envFilesList.length; i++) {
+				Path targetFilepath = null;
+				System.out.println(envFilesList[i]);
+				targetFilepath = CommonUtil.createFile(projectRoot, envLogTargetStr + envFilesList[i]);
+				CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, envLogSrcStr + envFilesList[i]);
+			}
 		}
 
 		String envYamlSrcStr = "src/main/resources/config/envyaml/";
@@ -52,28 +55,32 @@ public class LogbackProjectContributor implements ProjectContributor {
 
 		File envYamlFolder = new File(yamlFolderPath);
 		String[] envYamlFilesList = envYamlFolder.list();
-		for (int i = 0; i < envYamlFilesList.length; i++) {
-			Path targetFilepath = null;
-			targetFilepath = CommonUtil.createFile(projectRoot, envYamlTargetStr + envYamlFilesList[i]);
-			CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, envYamlSrcStr + envYamlFilesList[i]);
+		if (envYamlFilesList != null) {
+			for (int i = 0; i < envYamlFilesList.length; i++) {
+				Path targetFilepath = null;
+				targetFilepath = CommonUtil.createFile(projectRoot, envYamlTargetStr + envYamlFilesList[i]);
+				CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, envYamlSrcStr + envYamlFilesList[i]);
+			}
 		}
 
 		/*
-		 * deleteFolderAlongWithFiles(envLogSrcStr);  //for deleting folders along with files
-		 * deleteFolderAlongWithFiles(envYamlSrcStr);
+		 * deleteFolderAlongWithFiles(localFilePath); // for deleting folders along with
+		 * deleteFolderAlongWithFiles(yamlFolderPath);
 		 */
-
 	}
 
-	/*
-	 * public void deleteFolderAlongWithFiles(String folderPath) { if (new
-	 * File(folderPath).exists()) { String[] files = new File(folderPath).list();
-	 * for (String file : files) { File currentFile = new File(new
-	 * File(folderPath).getPath(), file); currentFile.delete(); } new
-	 * File(folderPath).delete(); }
-	 * 
-	 * }
-	 */
+	public void deleteFolderAlongWithFiles(String folderPath) {
+		if (new File(folderPath).exists()) {
+			String[] files = new File(folderPath).list();
+			for (String file : files) {
+				File currentFile = new File(new File(folderPath).getPath(), "/" + file);
+				System.out.println("is Exists" + currentFile.exists());
+				currentFile.delete();
+			}
+			new File(folderPath).delete();
+		}
+
+	}
 
 	public void generateEnvLogBackFiles(EnvironmentTypeRequest environmentTypeRequest) {
 
@@ -92,9 +99,6 @@ public class LogbackProjectContributor implements ProjectContributor {
 				LogLevels logLevels = action.getValue();
 				String contextPath = logLevels.getContextPath(); // conetxtpath
 				Iterator<String> loggerLevel = logLevels.getLogLevel().listIterator(); // logger levels
-
-				// while (envList.hasNext()) {
-				// String logLevel=envList.next();
 				Document doc = icBuilder.newDocument();
 				Element mainRootElement = doc.createElement("configuration");
 				mainRootElement.setAttribute("scan", "true");
@@ -201,11 +205,11 @@ public class LogbackProjectContributor implements ProjectContributor {
 				while (loggerLevel.hasNext()) {
 					String logLevel = loggerLevel.next();
 
-					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.springframework.core", logLevel));
-					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.apache.http.wire", logLevel));
-					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.springframework.beans", logLevel));
-					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.springframework.context", logLevel));
-					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.springframework.web", logLevel));
+					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.springframework.core", "info"));
+					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.apache.http.wire", "debug"));
+					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.springframework.beans", "info"));
+					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.springframework.context", "info"));
+					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.springframework.web", "info"));
 					Element root = doc.createElement("root");
 					root.setAttribute("level", logLevel);
 					root.appendChild(CommonUtil.getAppenderReference(doc, "COMMON_ROLLER"));
@@ -213,14 +217,6 @@ public class LogbackProjectContributor implements ProjectContributor {
 					root.appendChild(CommonUtil.getAppenderReference(doc, "HTTP_ROLLER"));
 					mainRootElement.appendChild(root);
 				}
-				// Element root = CommonUtil.createElementWithAttr(doc, "root", "level",
-				// "info");
-//					Element root = doc.createElement("root");
-//					root.setAttribute("level", "info");
-//					root.appendChild(CommonUtil.getAppenderReference(doc, "COMMON_ROLLER"));
-//					root.appendChild(CommonUtil.getAppenderReference(doc, "CONSOLE"));
-//					root.appendChild(CommonUtil.getAppenderReference(doc, "HTTP_ROLLER"));
-//					mainRootElement.appendChild(root);
 				try {
 					Transformer transformer = TransformerFactory.newInstance().newTransformer();
 					transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -248,12 +244,13 @@ public class LogbackProjectContributor implements ProjectContributor {
 						}
 					}
 				} catch (Exception e) {
-					// TODO: handle exception
+
 				}
 
 				ApplicationYamlVO applicationYamlVO = new ApplicationYamlVO(
-						new LoggingVO().setConfig("classpath:logging/logback-" + env + ".xml"), new ServerConfigVO()
-								.setPort("8080").setServlet(new ServletConfigVo().setContextPath("/" + contextPath)));
+						new LoggingVO().setConfig("classpath:logging/logback-" + env + ".xml"),
+						new ServerConfigVO().setPort(environmentTypeRequest.getPort())
+								.setServlet(new ServletConfigVo().setContextPath("/" + contextPath)));
 				File yamlFilePath = new File(yamlFolderPath + "/application-" + env + ".yaml");
 				ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 				try {
@@ -270,17 +267,13 @@ public class LogbackProjectContributor implements ProjectContributor {
 						}
 					}
 				} catch (JsonGenerationException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-				// }
 
 			});
 
