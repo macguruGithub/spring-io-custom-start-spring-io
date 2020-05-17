@@ -1287,29 +1287,29 @@ initializr:
       content:
         - name: Swagger
           id: swagger-id
-          description: describe and document RESTful APIs
+          description: An open-source software framework backed by a large ecosystem of tools that helps developers design, build, document, and consume RESTful web services.
         - name: ORM mysql DB
           id: mysql-orm-id
-          description: metadata descriptor is used to connect object code to a relational database using Mysql
+          description: An open-source relational database management system.
           groupId: mysql
           artifactId: mysql-connector-java
           scope: runtime
         - name: MS SQL
           id: mssql-id
-          description: A Microsoft sql server for DB Connectivity.
+          description: A relational database management system developed by Microsoft.
         - name: Jenkins Scripts
           id: jenkins-scripts-id
-          description: automate the parts of software development related to building, testing, and deploying, facilitating continuous integration and continuous delivery
+          description: A free and open source automation server which helps automate the parts of software development related to building, testing, and deploying, facilitating continuous integration and continuous delivery.
         - name: ORM Oracle DB
           id: ojdbc-id
-          description: metadata descriptor is used to connect object code to a relational database using Oracle
+          description: A multi-model database management system produced and marketed by Oracle Corporation. It is a database commonly used for running online transaction processing, data warehousing and mixed database workloads.
           groupId: com.oracle
           artifactId: ojdbc6
           scope: system
           #systemPath: ${project.basedir}/lib/ojdbc6-11.2.0.3.jar
         - name: Kubernetes Script
           id: kube-script-id
-          description: open-source container-orchestration system for automating application deployment, scaling, and management.
+          description: An open-source container-orchestration system for automating application deployment, scaling, and management.
         - name: Redis
           id: redis-id
           description: An in-memory data structure project implementing a distributed, in-memory key-value database with optional durability.
@@ -1318,10 +1318,10 @@ initializr:
           description: One of the powerful mechanism to handle the runtime errors so that normal flow of the application can be maintained.
         - name: Nexus
           id: custom-id-nexus
-          description: A Repository used to access files.    
-        - name: logback
+          description: A repository manager which allows you to proxy, collect, and manage your dependencies so that you are not constantly juggling a collection of JARs.
+        - name: Environment Configuration
           id: env-logback
-          description: used to generate env specific applicaiton yaml and logback files
+          description: Used to generate environment specific applicaiton yaml and logback files.
   types:
     - name: Maven Project
       id: maven-project

@@ -91,6 +91,20 @@ public class HomeController {
 		return response;
 	}
 
+	@GetMapping(path = "/getIdForAddOns", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map<String,String> getIdForAddOns() {
+		Map<String, String> idList = new HashMap<String, String>();
+		idList.put("Swagger", "swagger-id");
+		idList.put("Jenkins Scripts", "jenkins-scripts-id");
+		idList.put("Kubernetes Script", "kube-script-id");
+		idList.put("Redis", "redis-id");
+		idList.put("Exception", "exception-id");
+		idList.put("Environment Configuration", "env-logback");
+		
+		return idList;
+		
+	}
 	@RequestMapping(path = "/iterateNexusDependancies", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public void dependancyIteration(@RequestBody List<DependancyList> list) {
@@ -174,7 +188,6 @@ public class HomeController {
 	@RequestMapping(path = "/logback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public void generateLogbackEnvFile(@RequestBody EnvironmentTypeRequest environmentTypeRequest) {
-		System.out.println("Type Request -> "+ environmentTypeRequest.toString());
 		LogbackProjectContributor logbackProjectContributor = new LogbackProjectContributor();
 		logbackProjectContributor.generateEnvLogBackFiles(environmentTypeRequest);
 
