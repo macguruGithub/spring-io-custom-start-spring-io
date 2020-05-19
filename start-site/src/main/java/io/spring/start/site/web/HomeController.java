@@ -188,6 +188,7 @@ public class HomeController {
 	@RequestMapping(path = "/logback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public void generateLogbackEnvFile(@RequestBody EnvironmentTypeRequest environmentTypeRequest) {
+		System.out.println("Logback Request -> " +environmentTypeRequest);
 		LogbackProjectContributor logbackProjectContributor = new LogbackProjectContributor();
 		logbackProjectContributor.generateEnvLogBackFiles(environmentTypeRequest);
 

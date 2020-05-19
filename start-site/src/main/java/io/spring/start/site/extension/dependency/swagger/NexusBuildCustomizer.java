@@ -22,9 +22,9 @@ public class NexusBuildCustomizer implements BuildCustomizer<Build> {
 		dependencies.remove("custom-id-nexus");
 		for (DependancyList dl : list) {
 			if(dl.getName().contains("ojdbc"))
-				dependencies.add(dl.getId(), dl.getName(), dl.getName(), DependencyScope.SYSTEM, "11.2.0.3");
+				dependencies.add(dl.getId()+"-nexus", dl.getId(), dl.getName(), DependencyScope.SYSTEM, "11.2.0.3");
 			else
-				dependencies.add(dl.getId(), dl.getName(), dl.getName(), DependencyScope.COMPILE);
+				dependencies.add(dl.getId()+"-nexus", dl.getId(), dl.getName(), DependencyScope.COMPILE);
 		}
 	}
 

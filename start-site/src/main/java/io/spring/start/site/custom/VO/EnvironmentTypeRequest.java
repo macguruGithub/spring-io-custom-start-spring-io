@@ -37,4 +37,10 @@ public class EnvironmentTypeRequest {
 		return this.port;
 	}
 
+	@Override
+	public String toString() {
+		return "EnvironmentTypeRequest [envTypeList=" + envTypeList + ", applicationName=" + applicationName + ", port="
+				+ port + "]";
+	}
+
 }

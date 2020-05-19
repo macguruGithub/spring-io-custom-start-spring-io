@@ -3,7 +3,6 @@ package io.spring.start.site.extension.envlogback;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -98,7 +97,7 @@ public class LogbackProjectContributor implements ProjectContributor {
 				String env = action.getKey(); // env name
 				LogLevels logLevels = action.getValue();
 				String contextPath = logLevels.getContextPath(); // conetxtpath
-				Iterator<String> loggerLevel = logLevels.getLogLevel().listIterator(); // logger levels
+				String loggerLevel = logLevels.getLogLevel(); // logger levels
 				Document doc = icBuilder.newDocument();
 				Element mainRootElement = doc.createElement("configuration");
 				mainRootElement.setAttribute("scan", "true");
@@ -202,8 +201,8 @@ public class LogbackProjectContributor implements ProjectContributor {
 				layout1.appendChild(pattern2);
 				HTTP_ROLLER.appendChild(layout1);
 				mainRootElement.appendChild(HTTP_ROLLER);
-				while (loggerLevel.hasNext()) {
-					String logLevel = loggerLevel.next();
+				if (loggerLevel != null) {
+					String logLevel = loggerLevel;
 
 					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.springframework.core", "info"));
 					mainRootElement.appendChild(CommonUtil.getLogLevel(doc, "org.apache.http.wire", "debug"));

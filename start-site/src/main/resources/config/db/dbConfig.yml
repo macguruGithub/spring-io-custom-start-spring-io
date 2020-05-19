@@ -1,6 +1,6 @@
-spring.datasource.url: jdbc:sqlserver://localhost;databaseName=ms_test
-spring.datasource.username: root
-spring.datasource.password: 1234
+spring.datasource.url: jdbc:mysql://${MYSQL_HOST:test}:3306/test
+spring.datasource.username: test
+spring.datasource.password: test
 spring.jpa.show-sql: true
 spring.jpa.hibernate.ddl-auto: update
-spring.jpa.hibernate.dialect: org.hibernate.dialect.MsSQL8Dialect
+spring.jpa.hibernate.dialect: org.hibernate.dialect.MySQLInnoDBDialect
