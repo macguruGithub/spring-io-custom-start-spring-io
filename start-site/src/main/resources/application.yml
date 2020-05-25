@@ -2,6 +2,10 @@ logging:
   level:
     org.springframework.core.env: warn
     org.springframework.jndi: warn
+    root: info
+
+  
+    
 
 server:
   compression:

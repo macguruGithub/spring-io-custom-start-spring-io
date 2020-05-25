@@ -53,24 +53,29 @@ public class CommonUtil {
 		return Files.exists(projectRoot.resolve(targetStr));
 	}
 
-	public static void writeTargetFileFromSrc(Path projectRoot, Path targetFilepath, String src)
+	public static void writeTargetFileFromSrc(Path projectRoot, Path targetFilepath, String src, byte[] bytes)
 			throws FileNotFoundException, IOException {
-		File file = new File(src);
-		FileInputStream fis = new FileInputStream(file);
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		byte[] buf = new byte[1024];
-		try {
-			for (int readNum; (readNum = fis.read(buf)) != -1;) {
-				bos.write(buf, 0, readNum); // no doubt here is 0
-				System.out.println("read " + readNum + " bytes,");
+		byte[] bytesToWrite = null;
+		if(bytes != null && bytes.length != 0) {
+			bytesToWrite = bytes;
+		}else {
+			File file = new File(src);
+			FileInputStream fis = new FileInputStream(file);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			byte[] buf = new byte[1024];
+			try {
+				for (int readNum; (readNum = fis.read(buf)) != -1;) {
+					bos.write(buf, 0, readNum); // no doubt here is 0
+					System.out.println("read " + readNum + " bytes,");
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
 			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
+			bytesToWrite = bos.toByteArray();
 		}
-		byte[] bytes = bos.toByteArray();
 		if (new File(targetFilepath.toString()).length() != 0)
 			Files.write(targetFilepath, "\n\n".getBytes(), StandardOpenOption.APPEND);
-		Files.write(targetFilepath, bytes, StandardOpenOption.APPEND);
+		Files.write(targetFilepath, bytesToWrite, StandardOpenOption.APPEND);
 	}
 
 	public static void writeFileForDB(DBTypeRequest typeRequest) throws FileNotFoundException, IOException {

@@ -8,7 +8,9 @@ import io.spring.initializr.generator.buildsystem.Build;
 import io.spring.initializr.generator.buildsystem.DependencyContainer;
 import io.spring.initializr.generator.buildsystem.DependencyScope;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
-import io.spring.start.site.custom.VO.DependancyList;
+import io.spring.initializr.web.VO.DependancyList;
+import io.spring.initializr.web.controller.ProjectGenerationController;
+import io.spring.initializr.web.project.ProjectRequest;
 
 @Service
 public class NexusBuildCustomizer implements BuildCustomizer<Build> {
@@ -17,15 +19,19 @@ public class NexusBuildCustomizer implements BuildCustomizer<Build> {
 
 	@Override
 	public void customize(Build build) {
-
+		//ProjectGenerationController<ProjectRequest> conRequest = BeanUtil.getBean(ProjectGenerationController.class);
+		ProjectRequest request = ProjectGenerationController.getZipRequest();
+		
 		DependencyContainer dependencies = build.dependencies();
 		dependencies.remove("custom-id-nexus");
-		for (DependancyList dl : list) {
+		request.getNexusDependencies().stream().forEach(dl ->{
+
 			if(dl.getName().contains("ojdbc"))
 				dependencies.add(dl.getId()+"-nexus", dl.getId(), dl.getName(), DependencyScope.SYSTEM, "11.2.0.3");
 			else
 				dependencies.add(dl.getId()+"-nexus", dl.getId(), dl.getName(), DependencyScope.COMPILE);
-		}
+		
+		});
 	}
 
 	public void getNexusDependancyList(List<DependancyList> depList) {

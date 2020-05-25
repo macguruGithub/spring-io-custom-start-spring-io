@@ -1,5 +1,6 @@
 package io.spring.start.site.extension.envlogback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,79 +22,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
+import io.spring.initializr.web.VO.EnvironmentTypeRequest;
+import io.spring.initializr.web.controller.ProjectGenerationController;
+import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.start.site.custom.CommonUtil;
 import io.spring.start.site.custom.VO.ApplicationYamlVO;
-import io.spring.start.site.custom.VO.EnvironmentTypeRequest;
-import io.spring.start.site.custom.VO.LogLevels;
+import io.spring.initializr.web.VO.LogLevels;
 import io.spring.start.site.custom.VO.LoggingVO;
 import io.spring.start.site.custom.VO.ServerConfigVO;
 import io.spring.start.site.custom.VO.ServletConfigVo;
 
 public class LogbackProjectContributor implements ProjectContributor {
 
-	public static String localFilePath = "src/main/resources/logging";
+	public static String logFilePath = "src/main/resources/logging";
 	public static String yamlFolderPath = "src/main/resources/config/envyaml";
 
 	@Override
 	public void contribute(Path projectRoot) throws IOException {
-		String envLogTargetStr = "src/main/resources/logging/";
-		String envLogSrcStr = "src/main/resources/logging/";
-		File envLogFolder = new File(localFilePath);
-		String[] envFilesList = envLogFolder.list();
-		if (envFilesList != null) {
-			for (int i = 0; i < envFilesList.length; i++) {
-				Path targetFilepath = null;
-				System.out.println(envFilesList[i]);
-				targetFilepath = CommonUtil.createFile(projectRoot, envLogTargetStr + envFilesList[i]);
-				CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, envLogSrcStr + envFilesList[i]);
-			}
-		}
-
-		String envYamlSrcStr = "src/main/resources/config/envyaml/";
-		String envYamlTargetStr = "src/main/resources/config/";
-
-		File envYamlFolder = new File(yamlFolderPath);
-		String[] envYamlFilesList = envYamlFolder.list();
-		if (envYamlFilesList != null) {
-			for (int i = 0; i < envYamlFilesList.length; i++) {
-				Path targetFilepath = null;
-				targetFilepath = CommonUtil.createFile(projectRoot, envYamlTargetStr + envYamlFilesList[i]);
-				CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, envYamlSrcStr + envYamlFilesList[i]);
-			}
-		}
-
-		/*
-		 * deleteFolderAlongWithFiles(localFilePath); // for deleting folders along with
-		 * deleteFolderAlongWithFiles(yamlFolderPath);
-		 */
+		ProjectRequest request = ProjectGenerationController.getZipRequest();
+		generateEnvLogBackFiles(request.getEnvRequest(),projectRoot);
 	}
 
-	public void deleteFolderAlongWithFiles(String folderPath) {
-		if (new File(folderPath).exists()) {
-			String[] files = new File(folderPath).list();
-			for (String file : files) {
-				File currentFile = new File(new File(folderPath).getPath(), "/" + file);
-				System.out.println("is Exists" + currentFile.exists());
-				currentFile.delete();
-			}
-			new File(folderPath).delete();
-		}
-
-	}
-
-	public void generateEnvLogBackFiles(EnvironmentTypeRequest environmentTypeRequest) {
+	public void generateEnvLogBackFiles(EnvironmentTypeRequest environmentTypeRequest,Path projectRoot) {
 
 		DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder icBuilder;
 
 		try {
 			icBuilder = icFactory.newDocumentBuilder();
-			File folder = new File(localFilePath);
+			File folder = new File(logFilePath);
 			File yamlFolder = new File(yamlFolderPath);
 			folder.mkdir();
 			yamlFolder.mkdir();
 			environmentTypeRequest.getEnvTypeList().entrySet().stream().forEach(action -> {
-
 				String env = action.getKey(); // env name
 				LogLevels logLevels = action.getValue();
 				String contextPath = logLevels.getContextPath(); // conetxtpath
@@ -220,66 +181,43 @@ public class LogbackProjectContributor implements ProjectContributor {
 					Transformer transformer = TransformerFactory.newInstance().newTransformer();
 					transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 					DOMSource source = new DOMSource(doc);
-					File filePath = new File(localFilePath + "/logback-" + env + ".xml");
-
-					File[] logbackFileList = folder.listFiles();
-					if (logbackFileList.length == 0) {
-						filePath.createNewFile();
-						System.out.println("New File creation");
-						StreamResult console = new StreamResult(filePath);
-						transformer.transform(source, console);
-						System.out.println(env + "\nXML DOM Created Successfully..");
-
-					} else {
-						for (File item : logbackFileList) {
-							if (item.isFile()) {
-								filePath.createNewFile();
-								System.out.println("New File creation");
-								StreamResult console = new StreamResult(filePath);
-								transformer.transform(source, console);
-								System.out.println(env + "\nXML DOM Created Successfully..");
-
-							}
-						}
-					}
+					Path targetLogFilepath = null;
+					String targetLogStr = logFilePath + "/logback-" + env + ".xml";
+					targetLogFilepath = CommonUtil.createFile(projectRoot, targetLogStr);
+					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+					StreamResult outputTraget = new StreamResult(outputStream);
+					transformer.transform(source, outputTraget);
+					CommonUtil.writeTargetFileFromSrc(projectRoot, targetLogFilepath,null ,outputStream.toByteArray());
+					System.out.println(env + "\nXML DOM Created Successfully..");
+				
 				} catch (Exception e) {
-
+					e.printStackTrace();
 				}
-
 				ApplicationYamlVO applicationYamlVO = new ApplicationYamlVO(
 						new LoggingVO().setConfig("classpath:logging/logback-" + env + ".xml"),
 						new ServerConfigVO().setPort(environmentTypeRequest.getPort())
 								.setServlet(new ServletConfigVo().setContextPath("/" + contextPath)));
-				File yamlFilePath = new File(yamlFolderPath + "/application-" + env + ".yaml");
+				Path targetYamlFilepath = null;
+				String targetYamlStr = yamlFolderPath + "/application-" + env + ".yaml";
+				try {
+					targetYamlFilepath = CommonUtil.createFile(projectRoot, targetYamlStr);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 				try {
-					File[] yamlFilesList = yamlFolder.listFiles();
-					if (yamlFilesList.length == 0) {
-						yamlFilePath.createNewFile();
-						mapper.writeValue(yamlFilePath, applicationYamlVO);
-						System.out.println(env + "yaml file Created Successfully..");
-					} else {
-						for (File item : yamlFilesList) {
-							yamlFilePath.createNewFile();
-							mapper.writeValue(yamlFilePath, applicationYamlVO);
-							System.out.println(env + "yaml file Created Successfully..");
-						}
-					}
-				} catch (JsonGenerationException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-
-					e.printStackTrace();
-				} catch (IOException e) {
+					CommonUtil.writeTargetFileFromSrc(projectRoot, targetYamlFilepath, null,mapper.writeValueAsBytes(applicationYamlVO));
+					System.out.println(env + "yaml file Created Successfully..");
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
-
 			});
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
+	
 
 }

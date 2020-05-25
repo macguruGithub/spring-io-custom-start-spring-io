@@ -35,13 +35,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.Gson;
+
 import io.spring.start.site.custom.CommonUtil;
 import io.spring.start.site.custom.VO.DBTypeRequest;
 import io.spring.start.site.custom.VO.DBValuesResponse;
 import io.spring.start.site.custom.VO.DependancyList;
 import io.spring.start.site.custom.VO.DependancyResp;
 import io.spring.start.site.custom.VO.DependancyValues;
-import io.spring.start.site.custom.VO.EnvironmentTypeRequest;
 import io.spring.start.site.custom.VO.NexusDependancyItems;
 import io.spring.start.site.custom.VO.NexusDependancyResponse;
 import io.spring.start.site.extension.dependency.swagger.NexusBuildCustomizer;
@@ -109,7 +110,7 @@ public class HomeController {
 	@ResponseBody
 	public void dependancyIteration(@RequestBody List<DependancyList> list) {
 		NexusBuildCustomizer customize = new NexusBuildCustomizer();
-		customize.getNexusDependancyList(list);
+		//customize.getNexusDependancyList(list);
 	}
 	
 	@RequestMapping(path = "/writeDBValues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -185,13 +186,14 @@ public class HomeController {
 		return "forward:index.html";
 	}
 
-	@RequestMapping(path = "/logback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public void generateLogbackEnvFile(@RequestBody EnvironmentTypeRequest environmentTypeRequest) {
-		System.out.println("Logback Request -> " +environmentTypeRequest);
-		LogbackProjectContributor logbackProjectContributor = new LogbackProjectContributor();
-		logbackProjectContributor.generateEnvLogBackFiles(environmentTypeRequest);
-
-	}
-
+//	@RequestMapping(path = "/logback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+//	@ResponseBody
+//	public void generateLogbackEnvFile(@RequestBody EnvironmentTypeRequest environmentTypeRequest) {
+//		System.out.println("Logback Request -> " +environmentTypeRequest);
+//		LogbackProjectContributor logbackProjectContributor = new LogbackProjectContributor();
+//		logbackProjectContributor.generateEnvLogBackFiles(environmentTypeRequest);
+//
+//	}
+	
+	
 }

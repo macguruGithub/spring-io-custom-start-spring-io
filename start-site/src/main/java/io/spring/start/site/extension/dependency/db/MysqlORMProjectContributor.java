@@ -15,7 +15,7 @@ public class MysqlORMProjectContributor implements ProjectContributor {
 		String srcStr = "src/main/resources/config/db/dbConfig.yml";
 		Path targetFilepath = null;
 		targetFilepath = CommonUtil.createFile(projectRoot, targetStr);
-		CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, srcStr);
+		CommonUtil.writeTargetFileFromSrc(projectRoot, targetFilepath, srcStr,null);
 
 	}
 }
