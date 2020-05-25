@@ -38,7 +38,6 @@ import org.springframework.web.client.RestTemplate;
 import com.google.gson.Gson;
 
 import io.spring.start.site.custom.CommonUtil;
-import io.spring.start.site.custom.VO.DBTypeRequest;
 import io.spring.start.site.custom.VO.DBValuesResponse;
 import io.spring.start.site.custom.VO.DependancyList;
 import io.spring.start.site.custom.VO.DependancyResp;
@@ -113,16 +112,16 @@ public class HomeController {
 		//customize.getNexusDependancyList(list);
 	}
 	
-	@RequestMapping(path = "/writeDBValues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public void writeDBValuesInYml(@RequestBody DBTypeRequest typeRequest) {
-		try {
-			CommonUtil.writeFileForDB(typeRequest);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	@RequestMapping(path = "/writeDBValues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+//	@ResponseBody
+//	public void writeDBValuesInYml(@RequestBody DBTypeRequest typeRequest) {
+//		try {
+//			CommonUtil.writeFileForDB(typeRequest);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	//}
 
 	@GetMapping(path = "/getHibernateValues", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody

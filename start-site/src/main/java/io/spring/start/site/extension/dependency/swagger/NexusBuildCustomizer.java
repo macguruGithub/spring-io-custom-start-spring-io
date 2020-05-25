@@ -19,7 +19,6 @@ public class NexusBuildCustomizer implements BuildCustomizer<Build> {
 
 	@Override
 	public void customize(Build build) {
-		//ProjectGenerationController<ProjectRequest> conRequest = BeanUtil.getBean(ProjectGenerationController.class);
 		ProjectRequest request = ProjectGenerationController.getZipRequest();
 		
 		DependencyContainer dependencies = build.dependencies();

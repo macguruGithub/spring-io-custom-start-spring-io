@@ -16,18 +16,16 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import io.spring.initializr.web.VO.EnvironmentTypeRequest;
+import io.spring.initializr.web.VO.LogLevels;
 import io.spring.initializr.web.controller.ProjectGenerationController;
 import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.start.site.custom.CommonUtil;
 import io.spring.start.site.custom.VO.ApplicationYamlVO;
-import io.spring.initializr.web.VO.LogLevels;
 import io.spring.start.site.custom.VO.LoggingVO;
 import io.spring.start.site.custom.VO.ServerConfigVO;
 import io.spring.start.site.custom.VO.ServletConfigVo;

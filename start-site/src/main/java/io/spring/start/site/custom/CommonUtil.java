@@ -17,7 +17,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import io.spring.start.site.custom.VO.DBTypeRequest;
+import io.spring.initializr.web.VO.DBTypeRequest;
 
 public class CommonUtil {
 	public static boolean isDBConfigurationExists(Path targetFilepath) throws FileNotFoundException, IOException {
@@ -78,33 +78,35 @@ public class CommonUtil {
 		Files.write(targetFilepath, bytesToWrite, StandardOpenOption.APPEND);
 	}
 
-	public static void writeFileForDB(DBTypeRequest typeRequest) throws FileNotFoundException, IOException {
-		File file = new File("src/main/resources/config/db/dbConfig.yml");
-		FileWriter writer = new FileWriter(file);
+	public static void writeFileForDB(DBTypeRequest typeRequest, Path targetFilepath) throws FileNotFoundException, IOException {
 		String hostName = typeRequest.getHostName() != null ? typeRequest.getHostName() : "";
 		String dbName = typeRequest.getDbName() != null ? typeRequest.getDbName() : "";
 		if (typeRequest.getDbType().equals("mysql")) {
-			writer.write("spring.datasource.url: jdbc:mysql://${MYSQL_HOST:" + hostName + "}:3306/"
-					+ dbName + "\r\n");
+			writeToFile("spring.datasource.url: jdbc:mysql://${MYSQL_HOST:" + hostName + "}:3306/"+ dbName + "\r\n",targetFilepath);
 		} else if (typeRequest.getDbType().equals("mssql")) {
-			writer.write("spring.datasource.url: jdbc:sqlserver://" + hostName + ";databaseName="
-					+ dbName + "\r\n");
+			writeToFile("spring.datasource.url: jdbc:sqlserver://" + hostName + ";databaseName="+ dbName + "\r\n",targetFilepath);
 		} else if (typeRequest.getDbType().equals("oracle")) {
-			writer.write("spring.datasource.url: jdbc:oracle:thin:@" + hostName + "\r\n");
+			writeToFile("spring.datasource.url: jdbc:oracle:thin:@" + hostName + "\r\n",targetFilepath);
 		}
 		String username = typeRequest.getUsername() != null ? typeRequest.getUsername() : "";
 		String password = typeRequest.getPassword() != null ? typeRequest.getPassword() : "";
-		writer.write("spring.datasource.username: " + username + "\r\n");
-		writer.write("spring.datasource.password: " + password + "\r\n");
+		writeToFile("spring.datasource.username: " + username + "\r\n",targetFilepath);
+		writeToFile("spring.datasource.password: " + password + "\r\n",targetFilepath);
 
 		if (typeRequest.getIsHibernate() != null && typeRequest.getIsHibernate().equals("yes")) {
-			writer.write("spring.jpa.show-sql: " + typeRequest.getShowsql() + "\r\n");
-			writer.write("spring.jpa.hibernate.ddl-auto: " + typeRequest.getDdlauto() + "\r\n");
-			writer.write("spring.jpa.hibernate.dialect: org.hibernate.dialect." + typeRequest.getDialect() + "\r\n");
+			writeToFile("spring.jpa.show-sql: " + typeRequest.getShowsql() + "\r\n",targetFilepath);
+			writeToFile("spring.jpa.hibernate.ddl-auto: " + typeRequest.getDdlauto() + "\r\n",targetFilepath);
+			writeToFile("spring.jpa.hibernate.dialect: org.hibernate.dialect." + typeRequest.getDialect() + "\r\n",targetFilepath);
 		}
-
-		writer.close();
-
+	}
+	
+	private static void writeToFile(String input,  Path targetFilepath) {
+		try {
+			Files.write(targetFilepath, input.getBytes(), StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static Path createFile(Path projectRoot, String targetStr) throws IOException {
