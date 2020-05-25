@@ -44,7 +44,7 @@ import io.spring.start.site.custom.VO.DependancyResp;
 import io.spring.start.site.custom.VO.DependancyValues;
 import io.spring.start.site.custom.VO.NexusDependancyItems;
 import io.spring.start.site.custom.VO.NexusDependancyResponse;
-import io.spring.start.site.extension.dependency.swagger.NexusBuildCustomizer;
+import io.spring.start.site.extension.dependency.nexus.NexusBuildCustomizer;
 import io.spring.start.site.extension.envlogback.LogbackProjectContributor;
 
 /**

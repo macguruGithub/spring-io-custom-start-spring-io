@@ -1,4 +1,4 @@
-package io.spring.start.site.extension.dependency.swagger;
+package io.spring.start.site.extension.dependency.nexus;
 
 import java.util.List;
 

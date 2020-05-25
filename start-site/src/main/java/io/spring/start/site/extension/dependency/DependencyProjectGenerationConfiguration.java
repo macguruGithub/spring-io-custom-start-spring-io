@@ -35,6 +35,8 @@ import io.spring.start.site.extension.dependency.jenkins.KubernetesScriptBuildCu
 import io.spring.start.site.extension.dependency.jenkins.KubernetesScriptProjectContributor;
 import io.spring.start.site.extension.dependency.liquibase.LiquibaseProjectContributor;
 import io.spring.start.site.extension.dependency.lombok.LombokGradleBuildCustomizer;
+import io.spring.start.site.extension.dependency.nexus.NexusBuildCustomizer;
+import io.spring.start.site.extension.dependency.nexus.NexusProjectContributor;
 import io.spring.start.site.extension.dependency.reactor.ReactorTestBuildCustomizer;
 import io.spring.start.site.extension.dependency.springbatch.SpringBatchTestBuildCustomizer;
 import io.spring.start.site.extension.dependency.springkafka.SpringKafkaBuildCustomizer;
@@ -42,7 +44,6 @@ import io.spring.start.site.extension.dependency.springsecurity.SpringSecurityRS
 import io.spring.start.site.extension.dependency.springsecurity.SpringSecurityTestBuildCustomizer;
 import io.spring.start.site.extension.dependency.springsession.SpringSessionBuildCustomizer;
 import io.spring.start.site.extension.dependency.swagger.MessageSourceUtilCustomizer;
-import io.spring.start.site.extension.dependency.swagger.NexusBuildCustomizer;
 import io.spring.start.site.extension.dependency.swagger.RedisBuildCustomizer;
 import io.spring.start.site.extension.dependency.swagger.RedisProjectContributor;
 import io.spring.start.site.extension.dependency.swagger.SwaggerBuildCustomizer;
@@ -189,6 +190,12 @@ public class DependencyProjectGenerationConfiguration {
 	@ConditionalOnRequestedDependency("custom-id-nexus")
 	public NexusBuildCustomizer nexusBuildCustomizer() {
 		return new NexusBuildCustomizer();
+	}
+	
+	@Bean
+	@ConditionalOnRequestedDependency("custom-id-nexus")
+	public NexusProjectContributor nexusProjectContributor() {
+		return new NexusProjectContributor();
 	}
 
 	@Bean

@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import io.spring.initializr.web.VO.JenkinsRequest;
@@ -96,35 +97,70 @@ public class JenkinsScriptProjectContributor implements ProjectContributor {
 		CommonUtil.writeToFile(set1, jenkinsScriptsFilepath);
 		CommonUtil.writeToFile(dynamicData, jenkinsScriptsFilepath);
 		CommonUtil.writeToFile(set2, jenkinsScriptsFilepath);
-		//Path src_jenkinsScriptsFilepath = Paths.get("src/main/resources/config/jenkinsScripts/Jenkinsfile");
-		//Files.copy(src_jenkinsScriptsFilepath, jenkinsScriptsFilepath, StandardCopyOption.REPLACE_EXISTING);
 
 		Path jenkinsScriptsBuildImgFilepath_build = projectRoot.resolve("jenkins/build-img/build.sh");
 		Files.createFile(jenkinsScriptsBuildImgFilepath_build);
-		Path src_jenkinsScriptsBuildImgFilepath_build = Paths
-				.get("src/main/resources/config/jenkinsScripts/build-img/build.sh");
-		Files.copy(src_jenkinsScriptsBuildImgFilepath_build, jenkinsScriptsBuildImgFilepath_build,
-				StandardCopyOption.REPLACE_EXISTING);
+		String build_sh_data = "# Copy the new jar to the build location\r\n" + 
+				"cp -f ./target/*.jar jenkins/build-img/\r\n" + 
+				"\r\n" + 
+				"echo \"****************************\"\r\n" + 
+				"echo \"** Building Docker Image ***\"\r\n" + 
+				"echo \"****************************\"\r\n" + 
+				"\r\n" + 
+				"cd ./jenkins/build-img/ && docker build -t $API_NAME:$BUILD_TAG --no-cache .\r\n" + 
+				"";
+		Files.write(jenkinsScriptsBuildImgFilepath_build, build_sh_data.getBytes(),
+				StandardOpenOption.APPEND);
 
 		Path jenkinsScriptsBuildImgFilepath_docker = projectRoot.resolve("jenkins/build-img/Dockerfile");
 		Files.createFile(jenkinsScriptsBuildImgFilepath_docker);
-		Path src_jenkinsScriptsBuildImgFilepath_docker = Paths
-				.get("src/main/resources/config/jenkinsScripts/build-img/Dockerfile");
-		Files.copy(src_jenkinsScriptsBuildImgFilepath_docker, jenkinsScriptsBuildImgFilepath_docker,
-				StandardCopyOption.REPLACE_EXISTING);
+		String dockerFileData = "FROM openjdk:8-jre-alpine\r\n" + 
+				"\r\n" + 
+				"RUN mkdir app\r\n" + 
+				"\r\n" + 
+				"COPY *.jar /app/demo-0.0.1-SNAPSHOT.jar\r\n" + 
+				"\r\n" + 
+				"EXPOSE 8086\r\n" + 
+				"\r\n" + 
+				"ENTRYPOINT [\"java\",\"-jar\",\"/app/demo-0.0.1-SNAPSHOT.jar\"]\r\n" + 
+				"";
+		Files.write(jenkinsScriptsBuildImgFilepath_docker, dockerFileData.getBytes(),
+				StandardOpenOption.APPEND);
 
 		Path jenkinsScriptsBuildImgFilepath_mvm = projectRoot.resolve("jenkins/build-img/mvn.sh");
 		Files.createFile(jenkinsScriptsBuildImgFilepath_mvm);
-		Path src_jenkinsScriptsBuildImgFilepath_mvm = Paths
-				.get("src/main/resources/config/jenkinsScripts/build-img/mvn.sh");
-		Files.copy(src_jenkinsScriptsBuildImgFilepath_mvm, jenkinsScriptsBuildImgFilepath_mvm,
-				StandardCopyOption.REPLACE_EXISTING);
+		String mvn_sh_data = "\r\n" + 
+				"\r\n" + 
+				"echo \"***************************\"\r\n" + 
+				"echo \"** Building jar ***********\"\r\n" + 
+				"echo \"***************************\"\r\n" + 
+				"\r\n" + 
+				"\r\n" + 
+				"mvn -DskipTests clean install\r\n" + 
+				"";
+		Files.write(jenkinsScriptsBuildImgFilepath_mvm, mvn_sh_data.getBytes(),
+				StandardOpenOption.APPEND);
 
 		Path jenkinsScriptsPushImgFilepath = projectRoot.resolve("jenkins/push-img/push.sh");
 		Files.createFile(jenkinsScriptsPushImgFilepath);
-		Path src_jenkinsScriptsPushImgFilepath = Paths.get("src/main/resources/config/jenkinsScripts/push-img/push.sh");
-		Files.copy(src_jenkinsScriptsPushImgFilepath, jenkinsScriptsPushImgFilepath,
-				StandardCopyOption.REPLACE_EXISTING);
+		String push_sh_data = "\r\n" + 
+				"\r\n" + 
+				"echo \"********************\"\r\n" + 
+				"echo \"** Pushing image ***\"\r\n" + 
+				"echo \"********************\"\r\n" + 
+				"\r\n" + 
+				"IMAGE=$API_NAME\r\n" + 
+				"\r\n" + 
+				"echo \"** Logging in ***\"\r\n" + 
+				"docker login -u $OCIR_USERNAME -p $OCIR_PASSWORD iad.ocir.io\r\n" + 
+				"echo \"*** Tagging image ***\"\r\n" + 
+				"docker tag $IMAGE:$BUILD_TAG $OCIR_REPOSITORY:$BUILD_TAG\r\n" + 
+				"echo \"*** Pushing image ***\"\r\n" + 
+				"docker push $OCIR_REPOSITORY:$BUILD_TAG\r\n" + 
+				"\r\n" + 
+				"";
+		Files.write(jenkinsScriptsPushImgFilepath, push_sh_data.getBytes(),
+				StandardOpenOption.APPEND);
 
 	}
 
