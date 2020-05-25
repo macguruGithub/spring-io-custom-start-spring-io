@@ -37,7 +37,7 @@ spec:
       nodeSelector:
         node-pool: app-node-pool
       restartPolicy: Always
----
+
 apiVersion: v1
 kind: Service
 metadata:

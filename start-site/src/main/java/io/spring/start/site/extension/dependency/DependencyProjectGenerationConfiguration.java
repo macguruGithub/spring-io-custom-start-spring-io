@@ -26,12 +26,8 @@ import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import io.spring.initializr.generator.spring.build.gradle.ConditionalOnGradleVersion;
 import io.spring.initializr.metadata.InitializrMetadata;
-import io.spring.start.site.extension.dependency.db.MSSQLBuildCustomizer;
-import io.spring.start.site.extension.dependency.db.MSSQLProjectContributor;
-import io.spring.start.site.extension.dependency.db.MysqlORMBuildCustomizer;
-import io.spring.start.site.extension.dependency.db.MysqlORMProjectContributor;
-import io.spring.start.site.extension.dependency.db.OJDBCBuildCustomizer;
-import io.spring.start.site.extension.dependency.db.OJDBCProjectContributor;
+import io.spring.start.site.extension.dependency.db.DBProjectContributor;
+import io.spring.start.site.extension.dependency.db.DBProjectCustomizer;
 import io.spring.start.site.extension.dependency.flyway.FlywayProjectContributor;
 import io.spring.start.site.extension.dependency.jenkins.JenkinsScriptBuildCustomizer;
 import io.spring.start.site.extension.dependency.jenkins.JenkinsScriptProjectContributor;
@@ -135,15 +131,15 @@ public class DependencyProjectGenerationConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnRequestedDependency("mysql-orm-id")
-	public MysqlORMProjectContributor mysqlDBProjectContributor() {
-		return new MysqlORMProjectContributor();
+	@ConditionalOnRequestedDependency("db-id")
+	public DBProjectContributor dbProjectContributor() {
+		return new DBProjectContributor();
 	}
 
 	@Bean
-	@ConditionalOnRequestedDependency("mysql-orm-id")
-	public MysqlORMBuildCustomizer mysqlDBBuildCustomizer() {
-		return new MysqlORMBuildCustomizer();
+	@ConditionalOnRequestedDependency("db-id")
+	public DBProjectCustomizer dbBuildCustomizer() {
+		return new DBProjectCustomizer();
 	}
 
 	@Bean
@@ -158,30 +154,7 @@ public class DependencyProjectGenerationConfiguration {
 		return new JenkinsScriptBuildCustomizer();
 	}
 
-	@Bean
-	@ConditionalOnRequestedDependency("ojdbc-id")
-	public OJDBCProjectContributor ojdbcProjectContributor() {
-		return new OJDBCProjectContributor();
-	}
 
-	@Bean
-	@ConditionalOnRequestedDependency("ojdbc-id")
-	public OJDBCBuildCustomizer ojdbcBuildCustomizer() {
-		return new OJDBCBuildCustomizer();
-	}
-
-	@Bean
-	@ConditionalOnRequestedDependency("mssql-id")
-	public MSSQLProjectContributor mssqlProjectContributor() {
-		return new MSSQLProjectContributor();
-	}
-
-	@Bean
-	@ConditionalOnRequestedDependency("mssql-id")
-	public MSSQLBuildCustomizer mssqlBuildCustomizer() {
-		return new MSSQLBuildCustomizer();
-	}
-	
 	@Bean
 	@ConditionalOnRequestedDependency("kube-script-id")
 	public KubernetesScriptBuildCustomizer kubernetesBuildCustomizer() {

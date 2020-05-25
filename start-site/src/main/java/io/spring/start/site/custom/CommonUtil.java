@@ -100,7 +100,7 @@ public class CommonUtil {
 		}
 	}
 	
-	private static void writeToFile(String input,  Path targetFilepath) {
+	public static void writeToFile(String input,  Path targetFilepath) {
 		try {
 			Files.write(targetFilepath, input.getBytes(), StandardOpenOption.APPEND);
 		} catch (IOException e) {
