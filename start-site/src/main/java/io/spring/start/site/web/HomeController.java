@@ -15,7 +15,6 @@
  */
 package io.spring.start.site.web;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,17 +35,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.gson.Gson;
-
-import io.spring.start.site.custom.CommonUtil;
+import io.spring.initializr.web.VO.DependancyList;
 import io.spring.start.site.custom.VO.DBValuesResponse;
-import io.spring.start.site.custom.VO.DependancyList;
 import io.spring.start.site.custom.VO.DependancyResp;
 import io.spring.start.site.custom.VO.DependancyValues;
 import io.spring.start.site.custom.VO.NexusDependancyItems;
 import io.spring.start.site.custom.VO.NexusDependancyResponse;
 import io.spring.start.site.extension.dependency.nexus.NexusBuildCustomizer;
-import io.spring.start.site.extension.envlogback.LogbackProjectContributor;
 
 /**
  * Main Controller.
@@ -74,13 +70,21 @@ public class HomeController {
 		DependancyList dependancyList;
 
 		for (NexusDependancyItems items : result.getItems()) {
+			
 			dependancyList = new DependancyList();
+			dependancyList.setVersion(items.getVersion());
 			dependancyList.setName(items.getName());
 			dependancyList.setId(items.getName() + "-nexus");
 			dependancyList.setDescription("Taken from " + items.getRepository() + " Repository.");
-			list.add(dependancyList);
+			if(!"ojdbc6".equalsIgnoreCase(items.getName()))
+				list.add(dependancyList);
 		}
 
+		DependancyList d = new DependancyList();
+		d.setId("web");
+		d.setName("Spring Web");
+		d.setDescription("Build web, including RESTful, applications using Spring MVC. Uses Apache Tomcat as the default embedded container.");
+		list.add(d);
 		values.setName("Nexus Dependancies");
 		values.setValues(list);
 		valuesList.add(values);
@@ -89,6 +93,23 @@ public class HomeController {
 		response.setValues(valuesList);
 
 		return response;
+	}
+	
+	@GetMapping(path = "/data", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<?> getData() {
+		Map<String,Object> data = new HashMap<>();
+		data.put("nexus", getNexusRepo());
+		List<DependancyList> addOnList = new ArrayList<>();
+		addOnList.add(new DependancyList("env-logback","Environment Configuration","Used to generate and configure environment specific applicaiton yaml and logback files on the project resource."));
+		addOnList.add(new DependancyList("swagger-id","Swagger","An open-source software framework backed by a large ecosystem of tools that helps developers design, build, document, and consume RESTful web services."));
+		addOnList.add(new DependancyList("redis-id","Redis Session","An in-memory data structure project implementing a distributed, in-memory key-value database with optional durability."));
+		addOnList.add(new DependancyList("db-id","DataBase","Able to configure various database management system."));
+		//addOnList.add(new DependancyList("exception-id","Exception Handling","One of the powerful mechanism to handle the runtime errors so that normal flow of the application can be maintained."));
+		addOnList.add(new DependancyList("","Pipelines","An open-source container-orchestration system for automating application"));
+		data.put("addOns", addOnList);
+		data.put("dbDetails", getHibernateValues());
+		return ResponseEntity.ok(data);
 	}
 
 	@GetMapping(path = "/getIdForAddOns", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,68 +126,12 @@ public class HomeController {
 		return idList;
 		
 	}
-	@RequestMapping(path = "/iterateNexusDependancies", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public void dependancyIteration(@RequestBody List<DependancyList> list) {
-		NexusBuildCustomizer customize = new NexusBuildCustomizer();
-		//customize.getNexusDependancyList(list);
-	}
 	
-//	@RequestMapping(path = "/writeDBValues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-//	@ResponseBody
-//	public void writeDBValuesInYml(@RequestBody DBTypeRequest typeRequest) {
-//		try {
-//			CommonUtil.writeFileForDB(typeRequest);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	//}
 
-	@GetMapping(path = "/getHibernateValues", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public DBValuesResponse getHibernateValues(@RequestParam(value = "dbType") String dbType) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public ResponseEntity<?> getHibernateValues() {
 
-		Map<String, String> dialects;
-		DBValuesResponse dbVal = new DBValuesResponse();
-		if (dbType.equals("mysql")) {
-			dialects = new HashMap<String, String>();
-			dialects.put("MySQLDialect", "An SQL dialect for MySQL (prior to 5.x).");
-			dialects.put("MySQLInnoDBDialect",
-					"Deprecated Use “hibernate.dialect.storage_engine=innodb” environment variable or JVM system property instead.");
-			dialects.put("MySQLMyISAMDialect",
-					"Deprecated Use “hibernate.dialect.storage_engine=myisam” environment variable or JVM system property instead.");
-			dialects.put("MySQL5Dialect", "An SQL dialect for MySQL 5.x specific features.");
-			dialects.put("MySQL5InnoDBDialect",
-					"Deprecated Use “hibernate.dialect.storage_engine=innodb” environment variable or JVM system property instead.");
-			dialects.put("MySQL8Dialect", "An SQL dialect for MySQL 8.x specific features.");
-
-			dbVal.setDialects(dialects);
-			dbVal.setId("mysql-orm-id");
-		}
-		if (dbType.equals("mssql")) {
-			dialects = new HashMap<String, String>();
-			dialects.put("SQLServerDialect", "A dialect for Microsoft SQL Server 2000");
-			dialects.put("SQLServer2005Dialect", "A dialect for Microsoft SQL 2005.");
-			dialects.put("SQLServer2008Dialect",
-					"A dialect for Microsoft SQL Server 2008 with JDBC Driver 3.0 and above");
-			dialects.put("SQLServer2012Dialect", "Microsoft SQL Server 2012 Dialect");
-
-			dbVal.setDialects(dialects);
-			dbVal.setId("mssql-id");
-		}
-		if (dbType.equals("oracle")) {
-			dialects = new HashMap<String, String>();
-			dialects.put("Oracle8iDialect", "A dialect for Oracle 8i.");
-			dialects.put("Oracle9iDialect", "A dialect for Oracle 9i databases.");
-			dialects.put("Oracle10gDialect", "A dialect specifically for use with Oracle 10g.");
-			dialects.put("Oracle12cDialect", "An SQL dialect for Oracle 12c.");
-			dialects.put("OracleTypesHelper", "A Helper for dealing with the OracleTypes class");
-
-			dbVal.setDialects(dialects);
-			dbVal.setId("ojdbc-id");
-		}
-
+		
 		Map<String, String> ddlAuto = new HashMap<String, String>();
 		ddlAuto.put("validate", "validate the schema, makes no changes to the database.");
 		ddlAuto.put("update", "update the schema.");
@@ -174,10 +139,54 @@ public class HomeController {
 		ddlAuto.put("create-drop",
 				"drop the schema when the SessionFactory is closed explicitly, typically when the application is stopped.");
 		ddlAuto.put("none", "does nothing with the schema, makes no changes to the database");
+		
+		
+		List<DBValuesResponse> dbDataList = new ArrayList<>();
+		
+		
+		DBValuesResponse mysql_db = new DBValuesResponse();
+		Map<String, String> mysql_dialects = new HashMap<String, String>();
+		mysql_db.setDb("mysql");
+		mysql_dialects.put("MySQLDialect", "An SQL dialect for MySQL (prior to 5.x).");
+		mysql_dialects.put("MySQLInnoDBDialect",
+					"Deprecated Use “hibernate.dialect.storage_engine=innodb” environment variable or JVM system property instead.");
+		mysql_dialects.put("MySQLMyISAMDialect",
+					"Deprecated Use “hibernate.dialect.storage_engine=myisam” environment variable or JVM system property instead.");
+		mysql_dialects.put("MySQL5Dialect", "An SQL dialect for MySQL 5.x specific features.");
+		mysql_dialects.put("MySQL5InnoDBDialect",
+					"Deprecated Use “hibernate.dialect.storage_engine=innodb” environment variable or JVM system property instead.");
+		mysql_dialects.put("MySQL8Dialect", "An SQL dialect for MySQL 8.x specific features.");
+		mysql_db.setDialects(mysql_dialects);
+		dbDataList.add(mysql_db);
+		
+		DBValuesResponse mssql_db = new DBValuesResponse();
+		Map<String, String> mssql_dialects = new HashMap<String, String>();
+		mssql_db.setDb("mssql");
+		mssql_dialects.put("SQLServerDialect", "A dialect for Microsoft SQL Server 2000");
+		mssql_dialects.put("SQLServer2005Dialect", "A dialect for Microsoft SQL 2005.");
+		mssql_dialects.put("SQLServer2008Dialect",
+				"A dialect for Microsoft SQL Server 2008 with JDBC Driver 3.0 and above");
+		mssql_dialects.put("SQLServer2012Dialect", "Microsoft SQL Server 2012 Dialect");
+		mssql_db.setDialects(mssql_dialects);
+		dbDataList.add(mssql_db);
+		
+		DBValuesResponse oracle_db = new DBValuesResponse();
+		Map<String, String> oracle_dialects = new HashMap<String, String>();
+		oracle_db.setDb("oracle");
+		oracle_dialects.put("Oracle8iDialect", "A dialect for Oracle 8i.");
+		oracle_dialects.put("Oracle9iDialect", "A dialect for Oracle 9i databases.");
+		oracle_dialects.put("Oracle10gDialect", "A dialect specifically for use with Oracle 10g.");
+		oracle_dialects.put("Oracle12cDialect", "An SQL dialect for Oracle 12c.");
+		oracle_dialects.put("OracleTypesHelper", "A Helper for dealing with the OracleTypes class");
+		oracle_db.setDialects(mssql_dialects);
+		dbDataList.add(oracle_db);
+		
+		Map data = new HashMap<>();
+		data.put("id", "db-id");
+		data.put("dllAuto", ddlAuto);
+		data.put("dbDetailList", dbDataList);
 
-		dbVal.setDdlAuto(ddlAuto);
-
-		return dbVal;
+		return ResponseEntity.ok(data);
 	}
 
 	@GetMapping(path = "/", produces = MediaType.TEXT_HTML_VALUE)

@@ -3,6 +3,11 @@ package io.spring.start.site.custom.VO;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+
+@JsonInclude(Include.NON_NULL)
 public class DBValuesResponse implements Serializable {
 
 	/**
@@ -11,10 +16,22 @@ public class DBValuesResponse implements Serializable {
 	private static final long serialVersionUID = -4688565183436301554L;
 
 	private String id;
+	
+	private String db;
 
 	private Map<String,String> dialects;
 	
 	private Map<String,String> ddlAuto;
+	
+	
+
+	public String getDb() {
+		return db;
+	}
+
+	public void setDb(String db) {
+		this.db = db;
+	}
 
 	public String getId() {
 		return id;
