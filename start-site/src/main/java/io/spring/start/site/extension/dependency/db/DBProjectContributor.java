@@ -14,7 +14,7 @@ public class DBProjectContributor implements ProjectContributor  {
 	public void contribute(Path projectRoot) throws IOException {
 
 
-		String targetStr = "src/main/resources/application.xml";
+		String targetStr = "src/main/resources/application.yml";
 		
 		ProjectRequest request = ProjectGenerationController.getZipRequest();
 		Path targetFilepath = null;

@@ -95,7 +95,7 @@ public class HomeController {
 		return response;
 	}
 	
-	@GetMapping(path = "/data", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/custom/metadata/client", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<?> getData() {
 		Map<String,Object> data = new HashMap<>();
